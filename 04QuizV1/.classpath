@@ -13,6 +13,6 @@
 	<classpathentry kind="lib" path="lib/IOUtils/commons-io-2.6-test-sources.jar"/>
 	<classpathentry kind="lib" path="lib/IOUtils/commons-io-2.6-tests.jar"/>
 	<classpathentry kind="lib" path="lib/IOUtils/commons-io-2.6.jar"/>
-	<classpathentry kind="lib" path="/Users/david.jahn/Dropbox/Privat/Java/eclipse-workspace_4thClass/04QuizV1/lib/JDBC/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="lib/JDBC/ojdbc8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

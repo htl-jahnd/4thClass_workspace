@@ -30,112 +30,118 @@ import pkgMisc.LocalDateAdapter;
 
 public class Database
 {
-	private ArrayList<Car> collCars;
-	private static Database instance;
-	private static final String CARS_FILE_PATH = "cars.bin";
-	private static final String JSON_FILE_PATH = "cars.json";
+    private ArrayList<Car> collCars;
+    private static Database instance;
+    private static final String CARS_FILE_PATH = "cars.bin";
+    private static final String JSON_FILE_PATH = "cars.json";
 
-	public static Database newInstance()
-	{
-		if (instance == null)
-			return new Database();
-		else
-			return instance;
-	}
-
-	public void doStoreCarsBin() throws IOException
-	{
-		FileOutputStream fs = new FileOutputStream(CARS_FILE_PATH);
-		ObjectOutputStream os = new ObjectOutputStream(fs);
-		os.writeObject(collCars);
-		os.flush();
-		os.close();
-		fs.close();
-	}
-
-	@SuppressWarnings("unchecked")
-	public void doRestoreCarsBin() throws IOException, ClassNotFoundException
-	{
-		FileInputStream fs = new FileInputStream(CARS_FILE_PATH);
-		ObjectInputStream os = new ObjectInputStream(fs);
-		collCars = (ArrayList<Car>) os.readObject();
-		os.close();
-		fs.close();
-	}
-
-	public void doStoreCarsJson() throws IOException {
-		try (FileWriter fw = new FileWriter(JSON_FILE_PATH)){
-			GsonBuilder gson=new GsonBuilder()
-					.enableComplexMapKeySerialization() //treemap
-					.setPrettyPrinting()
-					.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
-			gson.create().toJson(collCars, fw);
-			fw.flush();
-		}
-	}
-
-	public void doRestoreCarsJson() throws IOException {
-		try (FileReader fr = new FileReader(JSON_FILE_PATH)){
-			GsonBuilder gson=new GsonBuilder()
-					.enableComplexMapKeySerialization() //treemap
-					.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
-	        Type collectionType = new TypeToken<ArrayList<Car>>(){}.getType();
-	        collCars = gson.create().fromJson(fr, collectionType);
-	        setNextRepairId();
-		}
-	}
-
-	public void setNextRepairId() {
-        for(Car car : collCars) {
-            for(Repair repair : car.getRepairs()){
-                if(repair.getIdRepair() > Repair.getNumberOfRepairs()){
-                    Repair.setNumberOfRepairs(repair.getIdRepair());
-                }
-            }
-        }
+    public static Database newInstance()
+    {
+	if (instance == null)
+	    return new Database();
+	else
+	    return instance;
     }
 
-	private Database()
-	{
-		collCars = new ArrayList<Car>();
-	}
+    public void doStoreCarsBin() throws IOException
+    {
+	FileOutputStream fs = new FileOutputStream(CARS_FILE_PATH);
+	ObjectOutputStream os = new ObjectOutputStream(fs);
+	os.writeObject(collCars);
+	os.flush();
+	os.close();
+	fs.close();
+    }
 
-	public void addCar(Car c) throws Exception
-	{
-		if (collCars.contains(c))
-			throw new Exception("An object with this id already exists");
-		collCars.add(c);
-	}
+    @SuppressWarnings("unchecked")
+    public void doRestoreCarsBin() throws IOException, ClassNotFoundException
+    {
+	FileInputStream fs = new FileInputStream(CARS_FILE_PATH);
+	ObjectInputStream os = new ObjectInputStream(fs);
+	collCars = (ArrayList<Car>) os.readObject();
+	os.close();
+	fs.close();
+    }
 
-	public void removeCar(Car c) throws Exception
+    public void doStoreCarsJson() throws IOException
+    {
+	try (FileWriter fw = new FileWriter(JSON_FILE_PATH))
 	{
-		if (!collCars.contains(c))
-			throw new Exception("An object with this id does not exist");
-		collCars.remove(c);
+	    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization() // treemap
+		    .setPrettyPrinting().registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
+	    gson.create().toJson(collCars, fw);
+	    fw.flush();
 	}
+    }
 
-	public void updateCar(Car c) throws Exception
+    public void doRestoreCarsJson() throws IOException
+    {
+	try (FileReader fr = new FileReader(JSON_FILE_PATH))
 	{
-		if (!collCars.contains(c))
-			throw new Exception("An object with this id does not exist");
-		int idx = collCars.lastIndexOf(c);
-		collCars.get(idx).setName(c.getName());
-		;
+	    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization() // treemap
+		    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
+	    Type collectionType = new TypeToken<ArrayList<Car>>() {
+	    }.getType();
+	    collCars = gson.create().fromJson(fr, collectionType);
+	    setNextRepairId();
 	}
+    }
 
-	public Collection<Car> getCollCars()
+    public void setNextRepairId()
+    {
+	for (Car car : collCars)
 	{
-		return collCars;
+	    for (Repair repair : car.getRepairs())
+	    {
+		if (repair.getIdRepair() > Repair.getNumberOfRepairs())
+		{
+		    Repair.setNumberOfRepairs(repair.getIdRepair());
+		}
+	    }
 	}
+    }
 
-	public Collection<Repair> getCollRepairs(Car c)
-	{
-		return c.getRepairs();
-	}
+    private Database()
+    {
+	collCars = new ArrayList<Car>();
+    }
 
-	public int getNumberOfRepairs()
-	{
-		return Repair.getNumberOfRepairs();
-	}
+    public void addCar(Car c) throws Exception
+    {
+	if (collCars.contains(c))
+	    throw new Exception("An object with this id already exists");
+	collCars.add(c);
+    }
+
+    public void removeCar(Car c) throws Exception
+    {
+	if (!collCars.contains(c))
+	    throw new Exception("An object with this id does not exist");
+	collCars.remove(c);
+    }
+
+    public void updateCar(Car c) throws Exception
+    {
+	if (!collCars.contains(c))
+	    throw new Exception("An object with this id does not exist");
+	int idx = collCars.lastIndexOf(c);
+	collCars.get(idx).setName(c.getName());
+	;
+    }
+
+    public Collection<Car> getCollCars()
+    {
+	return collCars;
+    }
+
+    public Collection<Repair> getCollRepairs(Car c)
+    {
+	return c.getRepairs();
+    }
+
+    public int getNumberOfRepairs()
+    {
+	return Repair.getNumberOfRepairs();
+    }
 
 }
