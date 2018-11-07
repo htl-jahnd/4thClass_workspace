@@ -1,0 +1,20 @@
+[
+	{
+		"id": 1,
+		"name": "asdf",
+		"collRepairs": {
+			"09.10.2018": {
+				"idRepair": 1,
+				"dateRepair": "09.10.2018",
+				"textRepair": "asdf\t",
+				"amountRepair": 1
+			},
+			"08.11.2018": {
+				"idRepair": 2,
+				"dateRepair": "08.11.2018",
+				"textRepair": "asdf\t",
+				"amountRepair": 1
+			}
+		}
+	}
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "id": "OEBB1",
+    "text": "÷BB-Quiz",
+    "collQuestions": []
+  },
+  {
+    "id": "KARN1",
+    "text": "Das Gro¿e K‰rnten Quiz",
+    "collQuestions": []
+  },
+  {
+    "id": "I1_1",
+    "text": "idiotentest",
+    "collQuestions": []
+  },
+  {
+    "id": "1_POS",
+    "text": "Programmier-Quiz",
+    "collQuestions": [
+      {
+        "testId": "1_POS",
+        "questionId": 1,
+        "text": "Ist C eine Compilersprache?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 2,
+        "text": "Ist Java objektorientiert?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 3,
+        "text": "Wie deklariert man eine Variable (integer) mit dem Namen \"Hallo\" in \"C\"?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 4,
+        "text": "Wie gibt man einen einfachen Text in \"C++\" aus?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 5,
+        "text": "Was ist ein Integer?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 6,
+        "text": "Von welcher Firma stammt das .NET-Framework?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 7,
+        "text": "Was macht das Semicolon (;) hinter einem Befehl?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 8,
+        "text": "Was ist der Unterschied zwischen Java und C?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 9,
+        "text": "Wofür wird CSS hauptsächlich verwendet?"
+      },
+      {
+        "testId": "1_POS",
+        "questionId": 10,
+        "text": "Was bedeutet das EVA- Prinzip?"
+      }
+    ]
+  },
+  {
+    "id": "OEBB2",
+    "text": "OEBB",
+    "collQuestions": []
+  },
+  {
+    "id": "AM1-A",
+    "text": "Mathe Test",
+    "collQuestions": []
+  }
+]

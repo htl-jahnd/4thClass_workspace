@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="763.0" prefWidth="1313.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.QuizController">
+   <children>
+      <MenuBar layoutX="-2.0" layoutY="2.0" prefHeight="29.0" prefWidth="901.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem fx:id="mntmSetDatabase" mnemonicParsing="false" onAction="#onSelectMenuFile" text="Set Database" />
+                  <MenuItem fx:id="mntmCurrentQuizToJson" mnemonicParsing="false" onAction="#onSelectMenuFile" text="Quiz to JSON (current)" />
+                  <MenuItem fx:id="mntmCompleteQuizzesToJson" mnemonicParsing="false" onAction="#onSelectMenuFile" text="Quiz to JSON (complete)" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Participant">
+              <items>
+                <MenuItem fx:id="mntmParticipantAdd" mnemonicParsing="false" onAction="#onSelectMenuParticipant" text="Add" />
+                  <MenuItem fx:id="mntmParticipantUpdate" mnemonicParsing="false" onAction="#onSelectMenuParticipant" text="Update" />
+                  <MenuItem fx:id="mntmParticipantDelete" mnemonicParsing="false" onAction="#onSelectMenuParticipant" text="Delete" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Quiz">
+            <items>
+              <MenuItem fx:id="mntmQuizReload" mnemonicParsing="false" onAction="#onSelectMenuQuiz" text="Reload" />
+                  <MenuItem fx:id="mntmQuizAdd" mnemonicParsing="false" onAction="#onSelectMenuQuiz" text="Add" />
+                  <MenuItem fx:id="mntmQuizUpdate" mnemonicParsing="false" onAction="#onSelectMenuQuiz" text="Update" />
+                  <MenuItem fx:id="mntmQuizDelete" mnemonicParsing="false" onAction="#onSelectMenuQuiz" text="Delete" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Question">
+              <items>
+                  <MenuItem fx:id="mntmQuestionAdd" mnemonicParsing="false" onAction="#onSelectMenuQuestion" text="Add" />
+                  <MenuItem fx:id="mntmQuestionUpdate" mnemonicParsing="false" onAction="#onSelectMenuQuestion" text="Update" />
+                  <MenuItem fx:id="mntmQuestionDelete" mnemonicParsing="false" onAction="#onSelectMenuQuestion" text="Delete" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Answer">
+              <items>
+                <MenuItem fx:id="mntmAnswerAdd" mnemonicParsing="false" onAction="#onSelectMenuAnswer" text="Add" />
+                  <MenuItem fx:id="mntmAnswerUpdate" mnemonicParsing="false" onAction="#onSelectMenuAnswer" text="Update" />
+                  <MenuItem fx:id="mntmAnswerDelete" mnemonicParsing="false" onAction="#onSelectMenuAnswer" text="Delete" />
+                  <MenuItem fx:id="mntmAsignCorrectAnswer" mnemonicParsing="false" onAction="#onSelectMenuAnswer" text="Asign corect Answer" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Log File">
+              <items>
+                <MenuItem fx:id="mntmShowLogFile" mnemonicParsing="false" onAction="#onSelectMenuLogFile" text="Show" />
+                  <MenuItem fx:id="mntmClearLogFile" mnemonicParsing="false" onAction="#onSelectMenuLogFile" text="Clear" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Transaction">
+              <items>
+                <MenuItem fx:id="mntmCommit" mnemonicParsing="false" onAction="#onSelectMenuTransaction" text="Commit" />
+                  <MenuItem fx:id="mntmRollback" mnemonicParsing="false" onAction="#onSelectMenuTransaction" text="Rollback" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <VBox layoutX="405.0" layoutY="110.0" prefHeight="617.0" prefWidth="290.0">
+         <children>
+            <Label prefHeight="39.0" prefWidth="297.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Quizzes" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="32.0" prefWidth="290.0">
+               <children>
+                  <TextField fx:id="txtQuizId" prefHeight="27.0" prefWidth="83.0" promptText="Id" />
+                  <TextField fx:id="txtQuizName" prefHeight="27.0" prefWidth="225.0" promptText="Name" />
+               </children>
+            </HBox>
+            <ListView fx:id="lstQuiz" onMouseClicked="#onQuizClicked" prefHeight="555.0" prefWidth="290.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+      <Label fx:id="lblMessage" layoutX="26.0" layoutY="728.0" prefHeight="27.0" prefWidth="849.0" />
+      <VBox layoutX="739.0" layoutY="114.0" prefHeight="268.0" prefWidth="549.0">
+         <children>
+            <Label prefHeight="33.0" prefWidth="596.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Questions" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="32.0" prefWidth="536.0">
+               <children>
+                  <TextField fx:id="txtQuestionId" prefHeight="27.0" prefWidth="83.0" promptText="Id" />
+                  <TextField fx:id="txtQuestionName" prefHeight="27.0" prefWidth="500.0" promptText="Name" />
+               </children>
+            </HBox>
+            <ListView fx:id="lstQuestions" onMouseClicked="#onQuestionClicked" prefHeight="210.0" prefWidth="549.0" />
+         </children>
+      </VBox>
+      <VBox layoutX="739.0" layoutY="391.0" prefHeight="329.0" prefWidth="549.0">
+         <children>
+            <Label prefHeight="39.0" prefWidth="630.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Answers" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tableAnswers" editable="true" onMouseClicked="#onAnswersClicked" prefHeight="293.0" prefWidth="536.0">
+              <columns>
+                <TableColumn fx:id="colAnswerId" editable="false" prefWidth="81.0" resizable="false" text="Id" />
+                <TableColumn fx:id="colAnswerText" onEditCommit="#onEditCellAnswerText" prefWidth="381.0" resizable="false" text="Text" />
+                  <TableColumn fx:id="colAnswerCorrect" prefWidth="86.0" text="Correct" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+      <HBox layoutX="26.0" layoutY="51.0" prefHeight="39.0" prefWidth="273.0">
+         <children>
+            <Label prefHeight="47.0" prefWidth="130.0" text="Current User:" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblCurrentUser" prefHeight="39.0" prefWidth="149.0" text="Nobody">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox layoutX="980.0" layoutY="51.0" prefHeight="39.0" prefWidth="319.0">
+         <children>
+            <Label prefHeight="39.0" prefWidth="112.0" text="Server IP:" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cmbxDatabaseIp" editable="true" prefHeight="26.0" prefWidth="225.0" promptText="Database IP" visibleRowCount="2" />
+         </children>
+      </HBox>
+      <VBox layoutX="33.0" layoutY="114.0" prefHeight="608.0" prefWidth="319.0">
+         <children>
+            <Label prefHeight="39.0" prefWidth="360.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Participants" wrapText="true">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tableParticipants" editable="true" onMouseClicked="#onParticipantsClicked" prefHeight="570.0" prefWidth="273.0">
+              <columns>
+                <TableColumn fx:id="colParticipantId" editable="false" prefWidth="75.0" text="Id" />
+                <TableColumn fx:id="colParticipantName" onEditCommit="#onEditCellParticipantName" prefWidth="118.99996948242188" text="Name" />
+                  <TableColumn fx:id="colParticipantType" onEditCommit="#onEditCellParticipantType" prefWidth="124.0" text="Schultyp" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+      <RadioButton fx:id="rdbtnShowAllQuizzes" layoutX="405.0" layoutY="51.0" mnemonicParsing="false" onAction="#onSelectRadioButtonShowQuizzes" text="Show all Quizzes">
+         <toggleGroup>
+            <ToggleGroup fx:id="groupShowQuizzes" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="rdbtnShowSpecificQuizzes" layoutX="405.0" layoutY="81.0" mnemonicParsing="false" onAction="#onSelectRadioButtonShowQuizzes" selected="true" text="Show Quizzes of Partcipants" toggleGroup="$groupShowQuizzes" />
+   </children>
+</AnchorPane>
