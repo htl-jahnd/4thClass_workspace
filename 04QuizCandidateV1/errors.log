@@ -1,0 +1,11 @@
+2018-11-09T09:36:13.604812: Message: ORA-00947: Anzahl der Werte reicht nicht aus
+, Trace:     ojdbc8/oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:494)
+    ojdbc8/oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:446)
+    ojdbc8/oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1054)
+    ojdbc8/oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:623)
+    ojdbc8/oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:252)
+2018-11-09T09:37:42.798602: Message: I/O-Fehler: The Network Adapter could not establish the connection, Trace:     ojdbc8/oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:774)
+    ojdbc8/oracle.jdbc.driver.PhysicalConnection.connect(PhysicalConnection.java:688)
+    ojdbc8/oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:39)
+    ojdbc8/oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:691)
+    java.sql/java.sql.DriverManager.getConnection(DriverManager.java:678)

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="770.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.MainController">
+   <children>
+      <ComboBox fx:id="cmbxDatabaseIp" editable="true" layoutX="758.0" layoutY="36.0" prefHeight="26.0" prefWidth="225.0" promptText="Database IP" visibleRowCount="2" />
+      <HBox layoutX="111.0" layoutY="74.0" prefHeight="30.0" prefWidth="693.0">
+         <children>
+            <TextField fx:id="txtCandidatesName" prefHeight="27.0" prefWidth="299.0" promptText="Candidates Name" />
+            <RadioButton fx:id="rdbtnSchoolTypeNMS" mnemonicParsing="false" prefHeight="18.0" prefWidth="88.0" selected="true" text="NMS">
+               <toggleGroup>
+                  <ToggleGroup fx:id="groupSchoolType" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rdbtnSchoolTypeAHS" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="AHS" toggleGroup="$groupSchoolType" />
+            <RadioButton fx:id="rdbtnSchoolTypeOther" mnemonicParsing="false" prefHeight="18.0" prefWidth="92.0" text="Other" toggleGroup="$groupSchoolType" />
+            <Button fx:id="btnCaniddateOk" defaultButton="true" mnemonicParsing="false" onAction="#onSelectButton" prefHeight="27.0" prefWidth="90.0" text="Ok" />
+         </children>
+      </HBox>
+      <HBox layoutX="113.0" layoutY="137.0" prefHeight="34.0" prefWidth="676.0">
+         <children>
+            <ComboBox fx:id="cmbxQuizzes" prefHeight="27.0" prefWidth="197.0" />
+            <Button fx:id="btnQuizOk" alignment="CENTER" contentDisplay="RIGHT" defaultButton="true" mnemonicParsing="false" onAction="#onSelectButton" prefHeight="27.0" prefWidth="90.0" text="Ok" />
+         </children>
+      </HBox>
+      <AnchorPane layoutX="134.0" layoutY="238.0" prefHeight="398.0" prefWidth="849.0">
+         <children>
+            <TextArea fx:id="txtQuestionText" layoutX="1.0" layoutY="-2.0" prefHeight="145.0" prefWidth="857.0" />
+            <ListView fx:id="lstAnswers" layoutX="-4.0" layoutY="164.0" prefHeight="238.0" prefWidth="403.0" />
+            <Button fx:id="btnConfirmAnswer" layoutX="712.0" layoutY="289.0" mnemonicParsing="false" onAction="#onSelectButton" prefHeight="97.0" prefWidth="128.0" text="Confirm" />
+         </children>
+      </AnchorPane>
+      <Label fx:id="lblMessage" layoutX="138.0" layoutY="688.0" prefHeight="39.0" prefWidth="866.0" />
+   </children>
+</AnchorPane>
