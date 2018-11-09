@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import pkgData.Answer;
 import pkgData.Database;
 import pkgData.Participant;
@@ -66,10 +67,10 @@ public class MainController
     private Label lblMessage;
     
     @FXML
-    private HBox hboxCandidateInfo;
+    private VBox vboxCandidateInfo;
     
     @FXML
-    private HBox hboxQuizInfo;
+    private VBox vboxQuizInfo;
 
     @FXML
     private AnchorPane paneQuestionAndAnswers;
@@ -129,12 +130,21 @@ public class MainController
 	db.insertTeilnahme(currentQuiz, currentParticipant);
 	db.selectAllQuestions(currentQuiz);
 	currentQuestion = db.getNextQuestion(null);
+	if(currentQuestion == null) {
+	    doDisplayQuizEnd();
+	}
 	db.selectAllAnswers(currentQuestion);
 	listAnswers.clear();
 	listAnswers.setAll(db.getAnswers());
 	txtQuestionText.setText(currentQuestion.getText());
-	hboxQuizInfo.setDisable(true);
+	vboxQuizInfo.setDisable(true);
 	paneQuestionAndAnswers.setDisable(false);
+	
+    }
+
+    private void doDisplayQuizEnd()
+    {
+	// TODO Auto-generated method stub
 	
     }
 
@@ -149,8 +159,9 @@ public class MainController
 	db.addParticipant(currentParticipant);
 	listQuizzes.clear();
 	listQuizzes.addAll(db.selectAllQuizzes());
-	hboxCandidateInfo.setDisable(true); 
-	hboxQuizInfo.setDisable(false);
+	vboxCandidateInfo.setDisable(true); 
+	vboxQuizInfo.setDisable(true);
+	vboxQuizInfo.setDisable(false);  //TODO not working
 	
 	cmbxQuizzes.getSelectionModel().select(listQuizzes.get(0));
     }

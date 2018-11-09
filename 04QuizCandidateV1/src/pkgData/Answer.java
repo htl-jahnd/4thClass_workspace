@@ -28,8 +28,7 @@ public class Answer
     @Override
     public String toString()
     {
-	return "Answer [testId=" + testId + ", questionId=" + questionId + ", answerId=" + answerId + ", answerText="
-		+ answerText + ", correct=" + isCorrect + "]";
+	return answerText;
     }
 
     public boolean isChosen()

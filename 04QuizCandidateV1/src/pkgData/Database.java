@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 public class Database
 {
@@ -98,9 +99,13 @@ public class Database
     {
 	if (curr != null)
 	{
-	    Question tmpQ = collQuestions.stream().filter(c -> c.getQuestionId() == curr.getQuestionId() + 1).findAny()
+	    try {
+		Question tmpQ = collQuestions.stream().filter(c -> c.getQuestionId() == curr.getQuestionId() + 1).findAny()
 		    .get();
-	    return tmpQ;
+		return tmpQ;
+	    }catch(NoSuchElementException ex) {
+		return null; //TODO find better solution for end of quiz
+	    }
 	} else
 	    return collQuestions.get(0);
     }

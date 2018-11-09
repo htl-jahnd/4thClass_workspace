@@ -1,7 +1,5 @@
 package pkgData;
 
-import java.util.ArrayList;
-
 public class Quiz
 {
 
@@ -18,9 +16,7 @@ public class Quiz
     @Override
     public String toString()
     {
-	StringBuilder sb = new StringBuilder(id);
-	sb.append("...").append(text);
-	return sb.toString();
+	return text;
     }
 
     public String getId()
