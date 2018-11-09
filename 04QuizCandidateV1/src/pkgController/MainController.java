@@ -1,5 +1,7 @@
 package pkgController;
 
+import java.sql.SQLException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -105,50 +107,61 @@ public class MainController
 		
 		if(txtCandidatesName.getText().length()< 3)
 		    throw new Exception("Name must be longer than 2");
-		
-		db = Database.reconnect(cmbxDatabaseIp.getValue());
-		
-		RadioButton selectedRadioButton = (RadioButton) groupSchoolType.getSelectedToggle();
-		String toogleGroupValue = selectedRadioButton.getText();
-
-		int id = db.selectMaxParticipantId();
-		currentParticipant = new Participant(id, txtCandidatesName.getText(),
-			toogleGroupValue);
-		db.addParticipant(currentParticipant);
-		listQuizzes.clear();
-		listQuizzes.addAll(db.selectAllQuizzes());
-		//hboxCandidateInfo.setDisable(true); TODO not working => nullpointer
-//		hboxQuizInfo.setDisable(false);
+		doLoadQuizzes();
 
 	    } else if (event.getSource().equals(btnConfirmAnswer))
 	    {
-		db.insertAnswer(lstAnswers.getSelectionModel().getSelectedItem(), currentParticipant);	
-		
-		currentQuestion = db.getNextQuestion(currentQuestion);
-		db.selectAllAnswers(currentQuestion);
-		listAnswers.clear();
-		listAnswers.setAll(db.getAnswers());
-		
-		
-		
+		doDisplayNextQuestion();
 	    } else if (event.getSource().equals(btnQuizOk))
 	    {
-		currentQuiz = cmbxQuizzes.getValue();
-		db.insertTeilnahme(currentQuiz, currentParticipant);
-		db.selectAllQuestions(currentQuiz);
-		currentQuestion = db.getNextQuestion(null);
-		db.selectAllAnswers(currentQuestion);
-		listAnswers.clear();
-		listAnswers.setAll(db.getAnswers());
-		txtQuestionText.setText(currentQuestion.getText());
-//		hboxQuizInfo.setDisable(true);
-//		paneQuestionAndAnswers.setDisable(false);
+		doLoadQuestion();
 	    }
 	} catch (Exception e)
 	{
 	    doHandleException(e);
 	}
 
+    }
+    
+    private void doLoadQuestion() throws SQLException
+    {
+	currentQuiz = cmbxQuizzes.getValue();
+	db.insertTeilnahme(currentQuiz, currentParticipant);
+	db.selectAllQuestions(currentQuiz);
+	currentQuestion = db.getNextQuestion(null);
+	db.selectAllAnswers(currentQuestion);
+	listAnswers.clear();
+	listAnswers.setAll(db.getAnswers());
+	txtQuestionText.setText(currentQuestion.getText());
+	hboxQuizInfo.setDisable(true);
+	paneQuestionAndAnswers.setDisable(false);
+	
+    }
+
+    private void doLoadQuizzes() throws Exception
+    {
+	db = Database.reconnect(cmbxDatabaseIp.getValue());
+	RadioButton selectedRadioButton = (RadioButton) groupSchoolType.getSelectedToggle();
+	String toogleGroupValue = selectedRadioButton.getText();
+	int id = db.selectMaxParticipantId();
+	currentParticipant = new Participant(id, txtCandidatesName.getText(),
+		toogleGroupValue);
+	db.addParticipant(currentParticipant);
+	listQuizzes.clear();
+	listQuizzes.addAll(db.selectAllQuizzes());
+	hboxCandidateInfo.setDisable(true); 
+	hboxQuizInfo.setDisable(false);
+	
+	cmbxQuizzes.getSelectionModel().select(listQuizzes.get(0));
+    }
+
+    private void doDisplayNextQuestion() throws SQLException {
+	db.insertAnswer(lstAnswers.getSelectionModel().getSelectedItem(), currentParticipant);	
+	currentQuestion = db.getNextQuestion(currentQuestion);
+	db.selectAllAnswers(currentQuestion);
+	listAnswers.clear();
+	listAnswers.setAll(db.getAnswers());
+	txtQuestionText.setText(currentQuestion.getText());
     }
     
     private void doHandleException(Exception ex)
