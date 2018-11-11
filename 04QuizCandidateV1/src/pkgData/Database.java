@@ -193,4 +193,14 @@ public class Database
 	conn.close();
     }
 
+    public static boolean isConnectionSet()
+    {
+        return isConnectionSet;
+    }
+
+    public static void setConnectionSet(boolean isConnectionSet)
+    {
+        Database.isConnectionSet = isConnectionSet;
+    }
+
 }
