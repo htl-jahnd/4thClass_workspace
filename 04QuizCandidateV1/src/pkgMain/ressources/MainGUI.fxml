@@ -76,7 +76,7 @@
       </HBox>
       <StackPane layoutX="113.0" layoutY="263.0" prefHeight="396.0" prefWidth="695.0">
          <children>
-            <AnchorPane fx:id="paneQuestionAndAnswers" disable="true">
+            <AnchorPane fx:id="paneQuestionAndAnswers" disable="true" visible="false">
                <children>
                   <TextArea fx:id="txtQuestionText" editable="false" layoutY="51.0" prefHeight="81.0" prefWidth="693.0" promptText="QuestionText" />
                   <ListView fx:id="lstAnswers" layoutY="214.0" prefHeight="162.0" prefWidth="489.0" />
@@ -93,7 +93,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="paneRedoQuiz" prefHeight="200.0" prefWidth="200.0" visible="false">
+            <AnchorPane fx:id="paneRedoQuiz" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Label fx:id="lblCorrectAnswers" layoutX="17.0" layoutY="61.0" prefHeight="33.0" prefWidth="676.0" text="Correct Answers: ">
                      <font>
@@ -112,7 +112,7 @@
                         <Font name="Heiti TC Light" size="24.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btnRedoQuiz" defaultButton="true" layoutX="533.0" layoutY="179.0" mnemonicParsing="false" onAction="#onSelectButton" text="Start a new Quiz">
+                  <Button fx:id="btnRedoQuiz" defaultButton="true" layoutX="533.0" layoutY="186.0" mnemonicParsing="false" onAction="#onSelectButton" text="Start a new Quiz">
                      <graphic>
                         <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -133,6 +133,15 @@
                         </ImageView>
                      </graphic>
                   </Label>
+                  <Button fx:id="btnSendResults" layoutX="17.0" layoutY="186.0" mnemonicParsing="false" onAction="#onSelectButton" text="Send results per mail">
+                     <graphic>
+                        <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@mail.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </AnchorPane>
          </children>
