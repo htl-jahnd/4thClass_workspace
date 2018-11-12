@@ -99,19 +99,44 @@ public class Database
     {
 	if (curr != null)
 	{
-	    try {
-		Question tmpQ = collQuestions.stream().filter(c -> c.getQuestionId() == curr.getQuestionId() + 1).findAny()
-		    .get();
+	    try
+	    {
+		Question tmpQ = collQuestions.stream().filter(c -> c.getQuestionId() == curr.getQuestionId() + 1)
+			.findAny().get();
 		return tmpQ;
-	    }catch(NoSuchElementException ex) {
-		return null; //TODO find better solution for end of quiz
+	    } catch (NoSuchElementException ex)
+	    {
+		return null; // TODO find better solution for end of quiz
 	    }
 	} else
 	    return collQuestions.get(0);
     }
-    
-    
-    public void insertAnswer(Answer a, Participant p) throws SQLException {
+
+    public int selectCorretAnswers(Participant p, Quiz quiz) throws SQLException
+    {
+	String select = "select distinct f.anrOk, ta.anr testantwort from antwort a inner join frage f on a.fnr = f.fnr "
+		+ " inner join testantwort ta on ta.fnr = f.fnr "
+		+ " where a.tid LIKE ? and f.tid LIKE ? AND ta.tid = ? AND ta.knr = ? AND f.anrOk = a.anr";
+	int ret = 0;
+	PreparedStatement stmt = conn.prepareStatement(select);
+	stmt.setString(1, quiz.getId());
+	stmt.setString(2, quiz.getId());
+	stmt.setString(3, quiz.getId());
+	stmt.setInt(4, p.getParticipantId());
+	ResultSet rs = stmt.executeQuery();
+	while (rs.next())
+	{
+	    int corrAnsw = rs.getInt("anrOk");
+	    // int answNr = rs.getInt("anr");
+	    int chAnsw = rs.getInt("testantwort");
+	    if (corrAnsw == chAnsw)
+		ret++;
+	}
+	return ret;
+    }
+
+    public void insertAnswer(Answer a, Participant p) throws SQLException
+    {
 	String insert = "INSERT INTO testantwort VALUES (?,?,?,?)";
 	PreparedStatement stmt = conn.prepareStatement(insert);
 	stmt.setString(1, a.getTestId());
@@ -120,8 +145,9 @@ public class Database
 	stmt.setInt(4, p.getParticipantId());
 	stmt.executeUpdate();
     }
-    
-    public void insertTeilnahme(Quiz q, Participant p) throws SQLException {
+
+    public void insertTeilnahme(Quiz q, Participant p) throws SQLException
+    {
 	String insert = "INSERT INTO teilnahme VALUES (?,?,SYSDATE)";
 	PreparedStatement stmt = conn.prepareStatement(insert);
 	stmt.setString(1, q.getId());
@@ -147,6 +173,8 @@ public class Database
 	    instance = new Database();
 	    connectionString = ipAddres;
 	    createConnection();
+	    collQuestions = new ArrayList<Question>();
+	    collAnswers = new ArrayList<Answer>();
 	}
 	return instance;
     }
@@ -159,6 +187,8 @@ public class Database
 	}
 	connectionString = ipAddres;
 	createConnection();
+	collQuestions = new ArrayList<Question>();
+	collAnswers = new ArrayList<Answer>();
 	return instance;
     }
 
@@ -174,8 +204,7 @@ public class Database
 	conn = DriverManager.getConnection(connectionString, USER, PWD_DB);
 	conn.setAutoCommit(true);
 	isConnectionSet = true;
-	collQuestions = new ArrayList<Question>();
-	collAnswers = new ArrayList<Answer>();
+
     }
 
     public void commit() throws Exception
@@ -195,12 +224,12 @@ public class Database
 
     public static boolean isConnectionSet()
     {
-        return isConnectionSet;
+	return isConnectionSet;
     }
 
     public static void setConnectionSet(boolean isConnectionSet)
     {
-        Database.isConnectionSet = isConnectionSet;
+	Database.isConnectionSet = isConnectionSet;
     }
 
 }

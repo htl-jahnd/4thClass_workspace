@@ -9,8 +9,11 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -60,23 +63,6 @@
             </HBox>
          </children>
       </VBox>
-      <AnchorPane fx:id="paneQuestionAndAnswers" disable="true" layoutX="113.0" layoutY="263.0" prefHeight="396.0" prefWidth="695.0">
-         <children>
-            <TextArea fx:id="txtQuestionText" editable="false" layoutY="51.0" prefHeight="81.0" prefWidth="693.0" promptText="QuestionText" />
-            <ListView fx:id="lstAnswers" layoutY="214.0" prefHeight="162.0" prefWidth="489.0" />
-            <Label layoutX="1.0" layoutY="160.0" prefHeight="39.0" prefWidth="489.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Answers" wrapText="true">
-               <font>
-                  <Font name="Heiti TC Light" size="18.0" />
-               </font>
-            </Label>
-            <Button fx:id="btnConfirmAnswer" defaultButton="true" layoutX="511.0" layoutY="328.0" mnemonicParsing="false" onAction="#onSelectButton" prefHeight="48.0" prefWidth="170.0" text="Confirm Answer" />
-            <Label prefHeight="39.0" prefWidth="693.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Question" wrapText="true">
-               <font>
-                  <Font name="Heiti TC Light" size="18.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
       <Label fx:id="lblMessage" layoutX="113.0" layoutY="666.0" prefHeight="39.0" prefWidth="676.0" />
       <HBox layoutX="485.0" layoutY="14.0" prefHeight="34.0" prefWidth="319.0">
          <children>
@@ -88,5 +74,68 @@
             <ComboBox fx:id="cmbxDatabaseIp" editable="true" prefHeight="26.0" prefWidth="225.0" promptText="Database IP" visibleRowCount="2" />
          </children>
       </HBox>
+      <StackPane layoutX="113.0" layoutY="263.0" prefHeight="396.0" prefWidth="695.0">
+         <children>
+            <AnchorPane fx:id="paneQuestionAndAnswers" disable="true">
+               <children>
+                  <TextArea fx:id="txtQuestionText" editable="false" layoutY="51.0" prefHeight="81.0" prefWidth="693.0" promptText="QuestionText" />
+                  <ListView fx:id="lstAnswers" layoutY="214.0" prefHeight="162.0" prefWidth="489.0" />
+                  <Label layoutX="1.0" layoutY="160.0" prefHeight="39.0" prefWidth="489.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Answers" wrapText="true">
+                     <font>
+                        <Font name="Heiti TC Light" size="18.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btnConfirmAnswer" defaultButton="true" layoutX="511.0" layoutY="328.0" mnemonicParsing="false" onAction="#onSelectButton" prefHeight="48.0" prefWidth="170.0" text="Confirm Answer" />
+                  <Label prefHeight="39.0" prefWidth="693.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Question" wrapText="true">
+                     <font>
+                        <Font name="Heiti TC Light" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneRedoQuiz" prefHeight="200.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label fx:id="lblCorrectAnswers" layoutX="17.0" layoutY="61.0" prefHeight="33.0" prefWidth="676.0" text="Correct Answers: ">
+                     <font>
+                        <Font name="Optima Regular" size="15.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="33.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@checkmark.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <Label alignment="CENTER" prefHeight="39.0" prefWidth="695.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Congratulations!" wrapText="true">
+                     <font>
+                        <Font name="Heiti TC Light" size="24.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btnRedoQuiz" defaultButton="true" layoutX="533.0" layoutY="179.0" mnemonicParsing="false" onAction="#onSelectButton" text="Start a new Quiz">
+                     <graphic>
+                        <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@redo.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Label fx:id="lblWrongAnswers" layoutX="17.0" layoutY="118.0" prefHeight="33.0" prefWidth="676.0" text="Wrong Answers: ">
+                     <font>
+                        <Font name="Optima Regular" size="15.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@red_cross.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

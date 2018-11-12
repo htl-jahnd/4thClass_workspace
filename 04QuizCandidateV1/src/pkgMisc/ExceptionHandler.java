@@ -31,12 +31,12 @@ public class ExceptionHandler implements IStaticStrings
 	    ex.printStackTrace();
     }
 
-    public static void hanldeExpectedException(String msg, Exception ex)
+    public static void hanldeExpectedException(String title, Exception ex)
     {
 	Alert alert = new Alert(AlertType.ERROR);
 	alert.setTitle("Error");
-	alert.setHeaderText("And error occured");
-	alert.setContentText(msg);
+	alert.setHeaderText(title);
+	alert.setContentText(ex.getMessage());
 	alert.showAndWait();
 
 	Logger.doWriteLogFile(ex);

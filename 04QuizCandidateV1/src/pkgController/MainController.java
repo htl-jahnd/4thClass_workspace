@@ -1,10 +1,11 @@
 package pkgController;
 
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import Exceptions.AnswerSelectionException;
+import Exceptions.EmptyIpException;
 import Exceptions.NameCastException;
-import Exceptions.NotConnectedException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,8 +26,12 @@ import pkgData.Participant;
 import pkgData.Question;
 import pkgData.Quiz;
 import pkgMisc.ExceptionHandler;
+import pkgMisc.IPAddressFormatValidator;
 
-public class MainController
+public class MainController // TODO send ergebnisse per email mit poup-fenster wenn fertig, resize dass
+			    // ganze fenster wenn fertig damit ned so leer ausschaut
+//FIXME doesnt show the icons at the end
+
 {
 
     @FXML
@@ -77,6 +82,18 @@ public class MainController
     @FXML
     private AnchorPane paneQuestionAndAnswers;
 
+    @FXML
+    private AnchorPane paneRedoQuiz;
+
+    @FXML
+    private Label lblCorrectAnswers;
+
+    @FXML
+    private Button btnRedoQuiz;
+
+    @FXML
+    private Label lblWrongAnswers;
+
     // ---------------------------------------------------------------------------
     // ---------------------------- NO FXML VARIABLES ----------------------------
     // ---------------------------------------------------------------------------
@@ -106,6 +123,7 @@ public class MainController
 	listDatabaseIps.add("192.168.128.152"); // internal IP
 	listDatabaseIps.add("212.152.179.117"); // external IP
 	cmbxDatabaseIp.setItems(listDatabaseIps);
+
     }
 
     @FXML
@@ -115,11 +133,7 @@ public class MainController
 	{
 	    if (event.getSource().equals(btnCaniddateOk))
 	    {
-		if (txtCandidatesName.getText().length() < 3)
-		    throw new NameCastException("The entered participate name has to be longer than 2 characters.");
-		else if (!Database.isConnectionSet())
-		    throw new NotConnectedException("A connection to the database has to be accomplished. "
-			    + "Please enter an IP addres or check your network connection.");
+		checkInputBeforeStart();
 		doLoadQuizzes();
 
 	    } else if (event.getSource().equals(btnConfirmAnswer))
@@ -127,18 +141,31 @@ public class MainController
 		if (lstAnswers.getSelectionModel().getSelectedItem() == null)
 		    throw new AnswerSelectionException(
 			    "An answer in the list has to be selected to continue with the next question in the quiz."
-				    + "Click on the right one and then try again.");
+				    + " Click on the right one and then try again.");
 		doDisplayNextQuestion();
 	    } else if (event.getSource().equals(btnQuizOk))
 	    {
 		doLoadQuestion();
+	    } else if (event.getSource().equals(btnRedoQuiz))
+	    {
+		clearAllFieldsAndVariables();
+
+		paneRedoQuiz.setVisible(false);
+		paneQuestionAndAnswers.setVisible(true);
+		paneQuestionAndAnswers.setDisable(true);
+
+		vboxCandidateInfo.setDisable(false);
+		vboxQuizInfo.setDisable(true);
 	    }
 	} catch (NameCastException ne)
 	{
 	    doHandleExpectedException("Participates name is too short", ne);
-	} catch (NotConnectedException nce)
+	} catch (EmptyIpException eie)
 	{
-	    doHandleExpectedException("Database Connection not established", nce);
+	    doHandleExpectedException("Database IP addres not entered", eie);
+	} catch (UnknownHostException nce)
+	{
+	    doHandleExpectedException("Invalid IP addres", nce);
 	} catch (AnswerSelectionException asw)
 	{
 	    doHandleExpectedException("An answer has to be selected", asw);
@@ -148,9 +175,37 @@ public class MainController
 	}
     }
 
+    private void clearAllFieldsAndVariables() throws Exception
+    {
+	db.closeConnection();
+	currentParticipant = null;
+	currentQuestion = null;
+	currentQuiz = null;
+	listAnswers.clear();
+	listQuizzes.clear();
+	txtCandidatesName.clear();
+	txtQuestionText.clear();
+    }
+
     // ---------------------------------------------------------------------------
     // ----------------------------- NO FXML METHODS -----------------------------
     // ---------------------------------------------------------------------------
+
+    private void checkInputBeforeStart() throws NameCastException, EmptyIpException, UnknownHostException
+    {
+	if (txtCandidatesName.getText().length() < 3)
+	    throw new NameCastException("The entered participate name has to be longer than 2 characters.");
+	else if (cmbxDatabaseIp.getValue().trim().isEmpty())
+	    throw new EmptyIpException(
+		    "An IP address for the database has to be entered. It can be either be selected by the provided"
+			    + " dropdown list or entered manually.");
+	else if (!IPAddressFormatValidator.validate(cmbxDatabaseIp.getValue()))
+	{
+	    throw new UnknownHostException(
+		    "\"" + cmbxDatabaseIp.getValue() + "\" could not be parsed. Please enter a valid IPv4 addres. "
+			    + "Be sure it has the format xxx.xxx.xxx.xxx");
+	}
+    }
 
     private void doHandleExpectedException(String message, Exception ex)
     {
@@ -174,10 +229,14 @@ public class MainController
 
     }
 
-    private void doDisplayQuizEnd()
+    private void doDisplayQuizEnd() throws SQLException
     {
-	// TODO Auto-generated method stub
-
+	int correct = db.selectCorretAnswers(currentParticipant, currentQuiz);
+	int wrongAnswers = 0;
+	paneQuestionAndAnswers.setVisible(false);
+	paneRedoQuiz.setVisible(true);
+	lblCorrectAnswers.setText("Correct Answers: " + correct);
+	lblWrongAnswers.setText("Wrong Answers: " + wrongAnswers);
     }
 
     private void doLoadQuizzes() throws Exception
