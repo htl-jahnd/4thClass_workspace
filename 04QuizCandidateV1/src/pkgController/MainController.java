@@ -30,8 +30,6 @@ import pkgMisc.IPAddressFormatValidator;
 
 public class MainController // TODO send ergebnisse per email mit poup-fenster wenn fertig, resize dass
 			    // ganze fenster wenn fertig damit ned so leer ausschaut
-//FIXME doesnt show the icons at the end
-
 {
 
     @FXML
@@ -232,7 +230,7 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
     private void doDisplayQuizEnd() throws SQLException
     {
 	int correct = db.selectCorretAnswers(currentParticipant, currentQuiz);
-	int wrongAnswers = 0;
+	int wrongAnswers = Database.getCollQuestions().size()-correct;
 	paneQuestionAndAnswers.setVisible(false);
 	paneRedoQuiz.setVisible(true);
 	lblCorrectAnswers.setText("Correct Answers: " + correct);
@@ -270,7 +268,6 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 	{
 	    doDisplayQuizEnd();
 	}
-
     }
 
     private void doHandleUnexpectedException(Exception ex)

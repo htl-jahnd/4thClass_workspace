@@ -125,3 +125,8 @@
     ojdbc8/oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1054)
     ojdbc8/oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:623)
     ojdbc8/oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:252)
+2018-11-12T23:47:26.148598: Message: null, Trace:     pkgController.MainController.clearAllFieldsAndVariables(MainController.java:180)
+    pkgController.MainController.onSelectButton(MainController.java:151)
+    java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)

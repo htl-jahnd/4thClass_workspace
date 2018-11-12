@@ -126,7 +126,7 @@
                         <Font name="Optima Regular" size="15.0" />
                      </font>
                      <graphic>
-                        <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="33.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@red_cross.png" />
                            </image>

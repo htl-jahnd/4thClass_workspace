@@ -114,7 +114,7 @@ public class Database
 
     public int selectCorretAnswers(Participant p, Quiz quiz) throws SQLException
     {
-	String select = "select distinct f.anrOk, ta.anr testantwort from antwort a inner join frage f on a.fnr = f.fnr "
+	String select = "select f.anrOk, ta.anr testantwort from antwort a inner join frage f on a.fnr = f.fnr "
 		+ " inner join testantwort ta on ta.fnr = f.fnr "
 		+ " where a.tid LIKE ? and f.tid LIKE ? AND ta.tid = ? AND ta.knr = ? AND f.anrOk = a.anr";
 	int ret = 0;
@@ -127,7 +127,7 @@ public class Database
 	while (rs.next())
 	{
 	    int corrAnsw = rs.getInt("anrOk");
-	    // int answNr = rs.getInt("anr");
+	    int answNr = rs.getInt("anr");
 	    int chAnsw = rs.getInt("testantwort");
 	    if (corrAnsw == chAnsw)
 		ret++;
@@ -230,6 +230,11 @@ public class Database
     public static void setConnectionSet(boolean isConnectionSet)
     {
 	Database.isConnectionSet = isConnectionSet;
+    }
+
+    public static ArrayList<Question> getCollQuestions()
+    {
+        return collQuestions;
     }
 
 }
