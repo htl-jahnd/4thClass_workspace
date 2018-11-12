@@ -31,7 +31,6 @@ import pkgMisc.IPAddressFormatValidator;
 public class MainController // TODO send ergebnisse per email mit poup-fenster wenn fertig, resize dass
 			    // ganze fenster wenn fertig damit ned so leer ausschaut
 {
-
     @FXML
     private ComboBox<String> cmbxDatabaseIp;
 
@@ -91,6 +90,9 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 
     @FXML
     private Label lblWrongAnswers;
+    
+    @FXML
+    private Button btnSendResults;
 
     // ---------------------------------------------------------------------------
     // ---------------------------- NO FXML VARIABLES ----------------------------
@@ -133,7 +135,6 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 	    {
 		checkInputBeforeStart();
 		doLoadQuizzes();
-
 	    } else if (event.getSource().equals(btnConfirmAnswer))
 	    {
 		if (lstAnswers.getSelectionModel().getSelectedItem() == null)
@@ -154,6 +155,11 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 
 		vboxCandidateInfo.setDisable(false);
 		vboxQuizInfo.setDisable(true);
+	    }
+	    
+	    else if(event.getSource().equals(btnSendResults)) {
+		//TODO send results per email
+		//
 	    }
 	} catch (NameCastException ne)
 	{
@@ -209,7 +215,6 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
     {
 	lblMessage.setText(ex.getMessage());
 	ExceptionHandler.hanldeExpectedException(message, ex);
-
     }
 
     private void doLoadQuestion() throws SQLException
@@ -230,7 +235,7 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
     private void doDisplayQuizEnd() throws SQLException
     {
 	int correct = db.selectCorretAnswers(currentParticipant, currentQuiz);
-	int wrongAnswers = Database.getCollQuestions().size()-correct;
+	int wrongAnswers = Database.getCollQuestions().size() - correct;
 	paneQuestionAndAnswers.setVisible(false);
 	paneRedoQuiz.setVisible(true);
 	lblCorrectAnswers.setText("Correct Answers: " + correct);
