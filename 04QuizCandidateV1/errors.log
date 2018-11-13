@@ -140,3 +140,8 @@
     java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
     java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
     java.base/java.lang.reflect.Method.invoke(Method.java:564)
+2018-11-13T11:01:37.785802: Message: Please enter a valid email address, Trace:     pkgController.MainController.onSelectButton(MainController.java:168)
+    java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    java.base/java.lang.reflect.Method.invoke(Method.java:564)

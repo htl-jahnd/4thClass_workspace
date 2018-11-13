@@ -68,7 +68,10 @@ public class GMailer
 	System.out.println("\n\n 2nd ===> get Mail Session..");
 	getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 	generateMailMessage = new MimeMessage(getMailSession);
-	generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress("david.jahn2000@gmail.com"));
+	for (int i = 0; i < to.length; i++)
+	{
+	    generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
+	}
 	generateMailMessage.setSubject(subject);
 
 	generateMailMessage.setContent(content, contentType);
