@@ -168,7 +168,6 @@ public class MainController // TODO resize dass ganze fenster wenn fertig damit 
 			throw new InvalidEmailException("Please enter a valid email address");
 		    String[] addresses = { text };
 		    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting();
-
 		    String content = gson.create().toJson(Database.getCollQuestions()); // TODO make beautiful
 		    GMailer g = new GMailer("email.spam.konto@gmail.com", "SafeTestPwd", addresses, "Quiz Results",
 			    content);
