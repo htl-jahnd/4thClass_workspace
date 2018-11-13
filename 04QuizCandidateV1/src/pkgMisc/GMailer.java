@@ -16,15 +16,15 @@ import javafx.scene.control.TextInputDialog;
 public class GMailer
 {
 
-    private String from;
-    private String fromPwd;
-    private String[] to;
-    private final String PORT = "587";
-    private final String HOST = "smtp.gmail.com";
-    private String subject;
-    private String content;
-    private final String contentType = "text/html";
-    private final String transportProtocol = "smtp";
+    private String senderAddress;
+    private String senderPassword;
+    private String[] toAddresses;
+    private static final String PORT = "587";
+    private static final String HOST = "smtp.gmail.com";
+    private String mailSubject;
+    private String mailContent;
+    private static final String CONTENT_TYPE = "text/html";
+    private static final String TRANSPORT_PROTOCOL = "smtp";
     static Properties mailServerProperties;
     static Session getMailSession;
     static MimeMessage generateMailMessage;
@@ -32,11 +32,11 @@ public class GMailer
     public GMailer(String from, String fromPwd, String[] to, String subject, String content)
     {
 	super();
-	this.from = from;
-	this.fromPwd = fromPwd;
-	this.to = to;
-	this.subject = subject;
-	this.content = content;
+	this.senderAddress = from;
+	this.senderPassword = fromPwd;
+	this.toAddresses = to;
+	this.mailSubject = subject;
+	this.mailContent = content;
     }
 
     static public String showEmailInputDialog()
@@ -57,33 +57,27 @@ public class GMailer
     public void sendMail() throws AddressException, MessagingException
     {
 	// Step1
-	System.out.println("\n 1st ===> setup Mail Server Properties..");
 	mailServerProperties = System.getProperties();
 	mailServerProperties.put("mail.smtp.port", PORT);
 	mailServerProperties.put("mail.smtp.auth", "true");
 	mailServerProperties.put("mail.smtp.starttls.enable", "true");
-	System.out.println("Mail Server Properties have been setup successfully..");
 
 	// Step2
-	System.out.println("\n\n 2nd ===> get Mail Session..");
 	getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 	generateMailMessage = new MimeMessage(getMailSession);
-	for (int i = 0; i < to.length; i++)
+	for (int i = 0; i < toAddresses.length; i++)
 	{
-	    generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
+	    generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[i]));
 	}
-	generateMailMessage.setSubject(subject);
+	generateMailMessage.setSubject(mailSubject);
 
-	generateMailMessage.setContent(content, contentType);
-	System.out.println("Mail Session has been created successfully..");
+	generateMailMessage.setContent(mailContent, CONTENT_TYPE);
 
 	// Step3
-	System.out.println("\n\n 3rd ===> Get Session and Send mail");
-	Transport transport = getMailSession.getTransport(transportProtocol);
+	Transport transport = getMailSession.getTransport(TRANSPORT_PROTOCOL);
 
 	// Enter your correct gmail UserID and Password
-	// if you have 2FA enabled then provide App Specific Password
-	transport.connect(HOST, from, fromPwd);
+	transport.connect(HOST, senderAddress, senderPassword);
 	transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 	transport.close();
     }
@@ -95,52 +89,52 @@ public class GMailer
 
     public String getFrom()
     {
-	return from;
+	return senderAddress;
     }
 
     public void setFrom(String from)
     {
-	this.from = from;
+	this.senderAddress = from;
     }
 
     public String getFromPwd()
     {
-	return fromPwd;
+	return senderPassword;
     }
 
     public void setFromPwd(String fromPwd)
     {
-	this.fromPwd = fromPwd;
+	this.senderPassword = fromPwd;
     }
 
     public String[] getTo()
     {
-	return to;
+	return toAddresses;
     }
 
     public void setTo(String[] to)
     {
-	this.to = to;
+	this.toAddresses = to;
     }
 
     public String getSubject()
     {
-	return subject;
+	return mailSubject;
     }
 
     public void setSubject(String subject)
     {
-	this.subject = subject;
+	this.mailSubject = subject;
     }
 
     public String getContent()
     {
-	return content;
+	return mailContent;
     }
 
     public void setContent(String content)
     {
-	this.content = content;
+	this.mailContent = content;
     }
 
 }
