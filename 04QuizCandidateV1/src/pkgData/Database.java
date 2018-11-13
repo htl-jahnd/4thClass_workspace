@@ -127,7 +127,6 @@ public class Database
 	while (rs.next())
 	{
 	    int corrAnsw = rs.getInt("anrOk");
-	    int answNr = rs.getInt("anr");
 	    int chAnsw = rs.getInt("testantwort");
 	    if (corrAnsw == chAnsw)
 		ret++;

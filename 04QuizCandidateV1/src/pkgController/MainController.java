@@ -2,9 +2,11 @@ package pkgController;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import com.google.gson.GsonBuilder;
 
 import Exceptions.AnswerSelectionException;
 import Exceptions.EmptyIpException;
+import Exceptions.InvalidEmailException;
 import Exceptions.NameCastException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,10 +28,10 @@ import pkgData.Participant;
 import pkgData.Question;
 import pkgData.Quiz;
 import pkgMisc.ExceptionHandler;
-import pkgMisc.IPAddressFormatValidator;
+import pkgMisc.GMailer;
+import pkgMisc.AddressFormatValidator;
 
-public class MainController // TODO send ergebnisse per email mit poup-fenster wenn fertig, resize dass
-			    // ganze fenster wenn fertig damit ned so leer ausschaut
+public class MainController // TODO resize dass ganze fenster wenn fertig damit ned so leer ausschaut
 {
     @FXML
     private ComboBox<String> cmbxDatabaseIp;
@@ -90,7 +92,7 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 
     @FXML
     private Label lblWrongAnswers;
-    
+
     @FXML
     private Button btnSendResults;
 
@@ -156,23 +158,38 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 		vboxCandidateInfo.setDisable(false);
 		vboxQuizInfo.setDisable(true);
 	    }
-	    
-	    else if(event.getSource().equals(btnSendResults)) {
-		//TODO send results per email
-		//
+
+	    else if (event.getSource().equals(btnSendResults))
+	    {
+		String text = GMailer.showEmailInputDialog();
+		if (text != null)
+		{
+		    if (!AddressFormatValidator.isValidEmailAddress(text))
+			throw new InvalidEmailException("Please enter an valid email address");
+		    String[] addresses = { text };
+		    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting();
+
+		    String content = gson.create().toJson(Database.getCollQuestions()); // TODO make beautiful
+		    GMailer g = new GMailer("email.spam.konto@gmail.com", "SafeTestPwd", addresses, "Quiz Results",
+			    content);
+		    g.sendMail();
+		}
 	    }
 	} catch (NameCastException ne)
 	{
 	    doHandleExpectedException("Participates name is too short", ne);
 	} catch (EmptyIpException eie)
 	{
-	    doHandleExpectedException("Database IP addres not entered", eie);
+	    doHandleExpectedException("Database IP address not entered", eie);
 	} catch (UnknownHostException nce)
 	{
-	    doHandleExpectedException("Invalid IP addres", nce);
+	    doHandleExpectedException("Invalid IP address", nce);
 	} catch (AnswerSelectionException asw)
 	{
 	    doHandleExpectedException("An answer has to be selected", asw);
+	} catch (InvalidEmailException iee)
+	{
+	    doHandleExpectedException("Invalid email address", iee);
 	} catch (Exception e)
 	{
 	    doHandleUnexpectedException(e);
@@ -203,10 +220,10 @@ public class MainController // TODO send ergebnisse per email mit poup-fenster w
 	    throw new EmptyIpException(
 		    "An IP address for the database has to be entered. It can be either be selected by the provided"
 			    + " dropdown list or entered manually.");
-	else if (!IPAddressFormatValidator.validate(cmbxDatabaseIp.getValue()))
+	else if (!AddressFormatValidator.isValidateIPAddress(cmbxDatabaseIp.getValue()))
 	{
 	    throw new UnknownHostException(
-		    "\"" + cmbxDatabaseIp.getValue() + "\" could not be parsed. Please enter a valid IPv4 addres. "
+		    "\"" + cmbxDatabaseIp.getValue() + "\" could not be parsed. Please enter a valid IPv4 address. "
 			    + "Be sure it has the format xxx.xxx.xxx.xxx");
 	}
     }
