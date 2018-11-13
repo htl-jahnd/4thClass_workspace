@@ -165,7 +165,7 @@ public class MainController // TODO resize dass ganze fenster wenn fertig damit 
 		if (text != null)
 		{
 		    if (!AddressFormatValidator.isValidEmailAddress(text))
-			throw new InvalidEmailException("Please enter an valid email address");
+			throw new InvalidEmailException("Please enter a valid email address");
 		    String[] addresses = { text };
 		    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting();
 
