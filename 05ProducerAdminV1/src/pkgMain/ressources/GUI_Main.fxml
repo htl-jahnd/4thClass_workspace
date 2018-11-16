@@ -1,7 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	
-<?import javafx.scene.layout.BorderPane?>
-	
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgMain.Controller_Main">
-	<!-- TODO Add Nodes -->
-</BorderPane>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="777.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.Controller_Main">
+   <children>
+      <MenuBar prefHeight="29.0" prefWidth="656.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Database">
+            <items>
+              <MenuItem fx:id="mntmLoadProducers" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Load Producers" />
+                  <MenuItem fx:id="mntmUpdateAndCommit" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Update &amp; commit" />
+                  <MenuItem fx:id="mntmAddProduct" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Add product" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <HBox layoutX="22.0" layoutY="51.0" prefHeight="29.0" prefWidth="744.0">
+         <children>
+            <TextField fx:id="txtConnectionString" prefHeight="27.0" prefWidth="357.0" promptText="Connection String" />
+            <TextField fx:id="txtUsername" promptText="Username">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </TextField>
+            <PasswordField fx:id="pwdPassword" promptText="Password">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </PasswordField>
+         </children>
+      </HBox>
+      <ComboBox fx:id="cmbxProducer" layoutX="22.0" layoutY="107.0" prefHeight="27.0" prefWidth="744.0" />
+      <TableView fx:id="tableProducts" editable="true" layoutX="22.0" layoutY="157.0" prefHeight="264.0" prefWidth="744.0">
+        <columns>
+          <TableColumn fx:id="colId" editable="false" prefWidth="75.0" text="Id" />
+          <TableColumn fx:id="colProductName" onEditCommit="#onEditCellProductName" prefWidth="292.0" text="Name" />
+            <TableColumn fx:id="colProductOnStock" onEditCommit="#onEditProductOnStock" prefWidth="153.0" text="On stock" />
+            <TableColumn fx:id="colOnMarket" editable="false" prefWidth="223.0" text="On Market" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
