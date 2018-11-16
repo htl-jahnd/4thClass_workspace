@@ -2,6 +2,10 @@ package pkgController;
 
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import com.google.gson.GsonBuilder;
 
 import Exceptions.AnswerSelectionException;
@@ -164,14 +168,7 @@ public class MainController // TODO resize dass ganze fenster wenn fertig damit 
 		String text = GMailer.showEmailInputDialog();
 		if (text != null)
 		{
-		    if (!AddressFormatValidator.isValidEmailAddress(text))
-			throw new InvalidEmailException("Please enter a valid email address");
-		    String[] addresses = { text };
-		    GsonBuilder gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting();
-		    String content = gson.create().toJson(Database.getCollQuestions()); // TODO make beautiful
-		    GMailer g = new GMailer("email.spam.konto@gmail.com", "SafeTestPwd", addresses, "Quiz Results",
-			    content);
-		    g.sendMail();
+		    formatAndSendResultsAsMail(text);
 		}
 	    }
 	} catch (NameCastException ne)
@@ -195,6 +192,59 @@ public class MainController // TODO resize dass ganze fenster wenn fertig damit 
 	}
     }
 
+    private void formatAndSendResultsAsMail(String address)
+	    throws InvalidEmailException, AddressException, MessagingException, SQLException
+    {
+	if (!AddressFormatValidator.isValidEmailAddress(address))
+	    throw new InvalidEmailException("Please enter a valid email address");
+	String[] addresses = { address };
+	int correct = db.selectCorretAnswers(currentParticipant, currentQuiz);
+	int wrongAnswers = Database.getCollQuestions().size() - correct;
+	String heading = "<h1>Results for Quiz " + currentQuiz.getText() + "</h1>";
+	String breaks = "<br>";
+	String correctAnswers = "<h2>Correct Answers: " + correct + ".</h2>";
+	String inCorrectAnswers = "<h2>Incorrect Answers: " + wrongAnswers + ".</h2>";
+	StringBuilder answersInDetails = new StringBuilder();
+	answersInDetails.append("<h2>Answers in detail: </h2>");
+	answersInDetails.append("<ul>");
+	for (Question q : Database.getCollQuestions())
+	{
+	    answersInDetails.append("<li>" + q.getText() + "\t");
+	    for (Answer a : q.getCollAnswers())
+	    {
+		answersInDetails.append("<ul>");
+		if (a.isChosen() && a.getIsCorrect())
+		{
+		    answersInDetails.append("<li>Choosen and correct: ").append(a.getAnswerText()).append("</li>");
+		} else
+		{
+		    if (a.isChosen())
+		    {
+			answersInDetails.append("<li>Choosen: ").append(a.getAnswerText()).append("</li>");
+		    }
+		    if (a.getIsCorrect())
+		    {
+			answersInDetails.append("<li>Correct: ").append(a.getAnswerText()).append("</li>");
+		    }
+		}
+		answersInDetails.append("</ul>");
+	    }
+	    answersInDetails.append("</li>");
+	}
+	answersInDetails.append("<ul>");
+
+	StringBuilder all = new StringBuilder(heading).append(breaks).append(breaks).append(correctAnswers)
+		.append(breaks).append(inCorrectAnswers);
+	all.append(breaks).append(breaks).append(answersInDetails.toString());
+	GMailer g = new GMailer("email.spam.konto@gmail.com", "SafeTestPwd", addresses, "Quiz Results", all.toString());
+	g.sendMail();
+
+    }
+
+    // ---------------------------------------------------------------------------
+    // ----------------------------- NO FXML METHODS -----------------------------
+    // ---------------------------------------------------------------------------
+
     private void clearAllFieldsAndVariables() throws Exception
     {
 	db.closeConnection();
@@ -206,10 +256,6 @@ public class MainController // TODO resize dass ganze fenster wenn fertig damit 
 	txtCandidatesName.clear();
 	txtQuestionText.clear();
     }
-
-    // ---------------------------------------------------------------------------
-    // ----------------------------- NO FXML METHODS -----------------------------
-    // ---------------------------------------------------------------------------
 
     private void checkInputBeforeStart() throws NameCastException, EmptyIpException, UnknownHostException
     {
