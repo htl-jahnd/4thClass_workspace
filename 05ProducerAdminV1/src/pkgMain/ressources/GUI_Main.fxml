@@ -27,7 +27,7 @@
       </MenuBar>
       <HBox layoutX="22.0" layoutY="51.0" prefHeight="29.0" prefWidth="744.0">
          <children>
-            <TextField fx:id="txtConnectionString" prefHeight="27.0" prefWidth="357.0" promptText="Connection String" />
+            <ComboBox fx:id="cmbxConnectionString" editable="true" prefHeight="27.0" prefWidth="377.0" promptText="Connection String" />
             <TextField fx:id="txtUsername" promptText="Username">
                <HBox.margin>
                   <Insets left="25.0" />
@@ -40,7 +40,7 @@
             </PasswordField>
          </children>
       </HBox>
-      <ComboBox fx:id="cmbxProducer" layoutX="22.0" layoutY="107.0" prefHeight="27.0" prefWidth="744.0" />
+      <ComboBox fx:id="cmbxProducer" layoutX="22.0" layoutY="107.0" onAction="#onSelectComboBox" prefHeight="27.0" prefWidth="744.0" />
       <TableView fx:id="tableProducts" editable="true" layoutX="22.0" layoutY="157.0" prefHeight="264.0" prefWidth="744.0">
         <columns>
           <TableColumn fx:id="colId" editable="false" prefWidth="75.0" text="Id" />

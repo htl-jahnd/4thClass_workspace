@@ -24,6 +24,7 @@ public class Producer
 	this.newest = newest;
 	this.oldest = oldest;
 	this.cnt = cnt;
+	collProducts= new ArrayList<Product>();
     }
 
     @Override

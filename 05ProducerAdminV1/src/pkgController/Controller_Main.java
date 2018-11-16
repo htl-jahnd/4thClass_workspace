@@ -13,9 +13,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.IntegerStringConverter;
 import pkgData.Database;
 import pkgData.Producer;
 import pkgData.Product;
+import pkgMisc.ProductStates;
 
 public class Controller_Main
 {
@@ -30,7 +35,7 @@ public class Controller_Main
     private MenuItem mntmAddProduct;
 
     @FXML
-    private TextField txtConnectionString;
+    private ComboBox<String> cmbxConnectionString;
 
     @FXML
     private TextField txtUsername;
@@ -57,31 +62,50 @@ public class Controller_Main
     private TableColumn<Product, LocalDate> colOnMarket;
 
     private Database db;
+    private Producer currentProducer;
     private ObservableList<Producer> listProducers;
     private ObservableList<Product> listProducts;
+    private ObservableList<String> listConnectionStrings;
 
     @FXML
     void initialize()
     {
 	listProducers = FXCollections.observableArrayList();
 	listProducts = FXCollections.observableArrayList();
-	
+	listConnectionStrings = FXCollections.observableArrayList();
+
 	cmbxProducer.setItems(listProducers);
 	tableProducts.setItems(listProducts);
+	listConnectionStrings.add(Database.CONNECTION_STRING_EXTERN);
+	listConnectionStrings.add(Database.CONNECTION_STRING_INTERN);
+	cmbxConnectionString.setItems(listConnectionStrings);
+	
+	colId.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id"));
+	colProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
+	colOnMarket.setCellValueFactory(new PropertyValueFactory<Product, LocalDate>("onMarket"));
+	colProductOnStock.setCellValueFactory(new PropertyValueFactory<Product, Integer>("onStock"));
+	colProductName.setCellFactory(TextFieldTableCell.forTableColumn());
+	colProductOnStock.setCellFactory(TextFieldTableCell.forTableColumn((new IntegerStringConverter())));
     }
-    
-    
 
     @FXML
-    void onEditCellProductName(ActionEvent event)
+    void onEditCellProductName(CellEditEvent<Product, String> event)
     {
-	// TODO later on
+	Product update = (event.getTableView().getItems().get(event.getTablePosition().getRow()));
+
+	update.setName(event.getNewValue());
+	update.setState(ProductStates.UPDATED);
+	db.updateProduct(update);
     }
 
     @FXML
-    void onEditProductOnStock(ActionEvent event)
+    void onEditProductOnStock(CellEditEvent<Product, Integer> event)
     {
-	// TODO later on
+	Product update = (event.getTableView().getItems().get(event.getTablePosition().getRow()));
+
+	update.setOnStock(event.getNewValue());
+	update.setState(ProductStates.UPDATED);
+	db.updateProduct(update);
     }
 
     @FXML
@@ -92,16 +116,52 @@ public class Controller_Main
 	    Object source = event.getSource();
 	    if (source.equals(mntmAddProduct))
 	    {
-	        // TODO
+		Product newP = new Product(db.getNextProductId(), "New Product", 0, LocalDate.now(),
+			currentProducer.getId(), ProductStates.ADDED);
+		db.addProduct(newP, currentProducer);
+		doRefreshTableProducts();
 	    } else if (source.equals(mntmLoadProducers))
 	    {
-	       db = Database.newInstance(txtConnectionString.getText());
-	       doFillListProducers();
+		db = Database.newInstance(cmbxConnectionString.getValue());
+		doFillListProducers();
 	    } else if (source.equals(mntmUpdateAndCommit))
 	    {
-	        // TODO
+		for(Producer prd : Database.getCollProducers()) {
+		    for(Product pro : prd.getCollProducts()) {
+			if(pro.getState().equals(ProductStates.ADDED)) {
+			    db.insertProductInDatabase(pro);
+			}
+			else if(pro.getState().equals(ProductStates.UPDATED)) {
+			    db.updateProductInDatabase(pro);
+			}
+		    }
+		}
 	    }
 	} catch (Exception e)
+	{
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+    }
+
+    private void doRefreshTableProducts()
+    {
+	listProducts.clear();
+	listProducts.addAll(db.getProducts());
+    }
+
+    @FXML
+    void onSelectComboBox(ActionEvent event)
+    {
+	try
+	{
+	    if (event.getSource().equals(cmbxProducer))
+	    {
+	        currentProducer = cmbxProducer.getValue();
+	        db.selectProducts(currentProducer);
+	        doRefreshTableProducts();
+	    }
+	} catch (SQLException e)
 	{
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();

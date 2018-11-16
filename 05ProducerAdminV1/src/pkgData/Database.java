@@ -7,14 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import pkgMisc.ProductStates;
+
 public class Database
 {
 
+    // "jdbc:oracle:thin:@192.168.128.152:1521:ora11g";
+    // "dbc:oracle:thin:@212.152.179.117:1521:ora11g";
     private static String connectionString;
+    public static final String CONNECTION_STRING_INTERN = "jdbc:oracle:thin:@192.168.128.152:1521:ora11g";
+    public static final String CONNECTION_STRING_EXTERN = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g";
     private static final String USER = "d4b12";
     private static final String PWD_DB = "d4b";
     private static Database instance = null;
@@ -122,40 +129,94 @@ public class Database
     public void selectProducers() throws SQLException
     {
 	ArrayList<Producer> prods = new ArrayList<Producer>();
-	String select = "SELECT p.id, p.name, p.sales, TO_CHAR(MIN(pc.onMarket),'DD.MM.YYYY') oldest,TO_CHAR(MAX(pc.onMarket),'DD.MM.YYYY') newest,  Count(pc.id) "
+	String select = "SELECT p.id, p.name, p.sales, TO_CHAR(MIN(pc.onMarket),'DD.MM.YYYY') oldest,TO_CHAR(MAX(pc.onMarket),'DD.MM.YYYY') newest,  Count(pc.id) cnt "
 		+ " FROM producers p inner join products pc on p.id = pc.id_pc " + " group by p.id, p.name, p.sales ";
 	PreparedStatement stmt = conn.prepareStatement(select);
 	ResultSet rs = stmt.executeQuery();
 	while (rs.next())
 	{
-	    Date newest = rs.getDate("newest");
-	    Date oldest = rs.getDate("oldest");
-	    LocalDate newestLC = newest.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	    LocalDate oldestLC = oldest.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	    prods.add(
-		    new Producer(rs.getInt(0), rs.getString(1), rs.getBigDecimal(2), newestLC, oldestLC, rs.getInt(5)));
+
+	    LocalDate newestLC = LocalDate.parse(rs.getString("newest"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+	    LocalDate oldestLC = LocalDate.parse(rs.getString("oldest"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+	    prods.add(new Producer(rs.getInt("id"), rs.getString("name"), rs.getBigDecimal("sales"), newestLC, oldestLC,
+		    rs.getInt("cnt")));
 	}
 	collProducers.clear();
 	collProducers.addAll(prods);
     }
-    
-    public void selectProducts(Producer p) throws SQLException {
+
+    public void selectProducts(Producer p) throws SQLException
+    {
 	ArrayList<Product> prods = new ArrayList<Product>();
-	String select = "SELECT id, name, id_pc, onStock, TO_CHAR(onMarket,'DD.MM.YYYY') onmarket FROM products where id_pc=?";
+	String select = "SELECT id, name, onStock, TO_CHAR(onMarket,'DD.MM.YYYY') onmarket, id_pc FROM products where id_pc=?";
+	PreparedStatement stmt = conn.prepareStatement(select);
+	stmt.setInt(1, p.getId());
+	ResultSet rs = stmt.executeQuery();
+	while (rs.next())
+	{
+	    LocalDate onMarketLC = LocalDate.parse(rs.getString("onmarket"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+	    prods.add(new Product(rs.getInt("id"), rs.getString("name"), rs.getInt("onStock"), onMarketLC, rs.getInt("id_pc"),
+		    ProductStates.NOT_CHANGED));
+	}
+	collProducts.clear();
+	collProducts.addAll(prods);
+	Producer tmp = collProducers.stream().filter(prod -> prod.getId() == p.getId()).findAny().get();
+	tmp.getCollProducts().clear();
+	tmp.getCollProducts().addAll(prods);
+    }
+
+    public void insertProductInDatabase(Product newProduct) throws Exception
+    {
+	String insert = "INSERT INTO products VALUES (seqProduct.nextVal,?,?,?,TO_DATE(?,'DD.MM.YYYY'))";
+	PreparedStatement stmt = conn.prepareStatement(insert);
+	stmt.setString(1, newProduct.getName());
+	stmt.setInt(2, newProduct.getIdProducerId());
+	stmt.setInt(3, newProduct.getOnStock());
+	stmt.setString(4, newProduct.getOnMarket().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+	stmt.executeUpdate();
+	commit();
+    }
+
+    public void updateProductInDatabase(Product toUpdate) throws Exception
+    {
+	String update = "UPDATE products SET name = ?, onstock = ? where id = ?";
+	PreparedStatement st = conn.prepareStatement(update, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+	st.setString(1, toUpdate.getName());
+	st.setInt(2, toUpdate.getOnStock());
+	st.setInt(3, toUpdate.getId());
+
+	st.executeUpdate();
+	commit();
+    }
+
+    public void addProduct(Product newProduct, Producer prod)
+    {
+	collProducts.add(newProduct);
+	prod.getCollProducts().add(newProduct);
+    }
+
+    public void updateProduct(Product toUpdate)
+    {
+	Product p = collProducts.stream().filter(prod -> prod.getId() == toUpdate.getId()).findAny().get();
+	if (p != null)
+	{
+	    p = toUpdate;
+	}
+    }
+
+    public int getNextProductId() throws SQLException
+    {
+	int ret = 0;
+	String select = "select seqProduct.nextVal from dual";
 	PreparedStatement stmt = conn.prepareStatement(select);
 	ResultSet rs = stmt.executeQuery();
 	while (rs.next())
 	{
-	    Date onMarket = rs.getDate("onmarket");
-	    LocalDate onMarketLC = onMarket.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	    prods.add(
-		    new Product(rs.getInt(0), rs.getString(1), rs.getInt(2), onMarketLC, rs.getInt(5)));
+	    ret = rs.getInt(1);
 	}
-	collProducts.clear();
-	collProducts.addAll(prods);
-	Producer tmp = collProducers.stream().filter(prod -> prod.getId() ==p.getId()).findAny().get();
-	tmp.getCollProducts().clear();
-	tmp.getCollProducts().addAll(prods);
+	return ret;
     }
 
 }

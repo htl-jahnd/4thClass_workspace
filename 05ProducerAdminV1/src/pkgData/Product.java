@@ -2,29 +2,43 @@ package pkgData;
 
 import java.time.LocalDate;
 
+import pkgMisc.ProductStates;
+
 public class Product
 {
     private int id;
     private String name;
     private int onStock;
     private LocalDate onMarket;
-    private int idProducer;
+    private int producerId;
+    private ProductStates state;
 
-    public Product(int id, String name, int onStock, LocalDate onMarket, int idProducer)
+    public Product(int id, String name, int onStock, LocalDate onMarket, int idProducer, ProductStates state)
     {
 	super();
 	this.id = id;
 	this.name = name;
 	this.onStock = onStock;
 	this.onMarket = onMarket;
-	this.idProducer = idProducer;
+	this.producerId = idProducer;
+	this.state = state;
     }
 
     @Override
     public String toString()
     {
 	return "Product [id=" + id + ", name=" + name + ", onStock=" + onStock + ", onMarket=" + onMarket
-		+ ", idProducer=" + idProducer + "]";
+		+ ", idProducer=" + producerId + ", state=" + state + "]";
+    }
+
+    public ProductStates getState()
+    {
+	return state;
+    }
+
+    public void setState(ProductStates state)
+    {
+	this.state = state;
     }
 
     public int getId()
@@ -67,14 +81,14 @@ public class Product
 	this.onMarket = onMarket;
     }
 
-    public int getIdProducer()
+    public int getIdProducerId()
     {
-	return idProducer;
+	return producerId;
     }
 
     public void setIdProducer(int idProducer)
     {
-	this.idProducer = idProducer;
+	this.producerId = idProducer;
     }
 
 }
