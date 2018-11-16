@@ -7,10 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/commons-validator-1.6/commons-validator-1.6-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-validator-1.6/commons-validator-1.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-validator-1.6/commons-validator-1.6-test-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-validator-1.6/commons-validator-1.6-tests.jar"/>
 	<classpathentry kind="lib" path="lib/commons-validator-1.6/commons-validator-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/JDBC/ojdbc8.jar"/>
 	<classpathentry kind="lib" path="lib/javaMail/javax.mail.jar"/>
