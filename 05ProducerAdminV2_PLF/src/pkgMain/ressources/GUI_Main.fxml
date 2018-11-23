@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="749.0" prefWidth="777.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.Controller_Main">
+   <children>
+      <MenuBar prefHeight="29.0" prefWidth="656.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Database">
+            <items>
+              <MenuItem fx:id="mntmLoadProducers" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Load Producers" />
+                  <MenuItem fx:id="mntmUpdateAndCommit" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Update &amp; commit" />
+                  <MenuItem fx:id="mntmAddProduct" mnemonicParsing="false" onAction="#onSelectMenuDatabase" text="Add product" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <VBox layoutX="22.0" layoutY="61.0" prefHeight="85.0" prefWidth="744.0">
+         <children>
+            <Label prefHeight="73.0" prefWidth="744.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Database Connection">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="29.0" prefWidth="744.0">
+               <children>
+                  <ComboBox fx:id="cmbxConnectionString" editable="true" prefHeight="27.0" prefWidth="377.0" promptText="Connection String" />
+                  <TextField fx:id="txtUsername" promptText="Username" text="d4b12">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <PasswordField fx:id="pwdPassword" promptText="Password" text="d4b12">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </PasswordField>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox fx:id="paneProducers" disable="true" layoutX="22.0" layoutY="174.0" prefHeight="85.0" prefWidth="744.0">
+         <children>
+            <Label prefHeight="73.0" prefWidth="744.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Producers">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cmbxProducer" onAction="#onSelectComboBox" prefHeight="27.0" prefWidth="744.0" />
+         </children>
+      </VBox>
+      <VBox fx:id="paneProductInformation" disable="true" layoutX="22.0" layoutY="308.0" prefHeight="336.0" prefWidth="744.0">
+         <children>
+            <Label prefHeight="73.0" prefWidth="744.0" style="-fx-border-style: solid; -fx-border-width: 0 0 5 0; -fx-border-color: darkgray;" text="Product Information">
+               <font>
+                  <Font name="Heiti TC Light" size="18.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tableProducts" editable="true" prefHeight="264.0" prefWidth="744.0">
+              <columns>
+                <TableColumn fx:id="colId" editable="false" prefWidth="75.0" text="Id" />
+                <TableColumn fx:id="colProductName" onEditCommit="#onEditCellProductName" prefWidth="292.0" text="Name" />
+                  <TableColumn fx:id="colProductOnStock" onEditCommit="#onEditProductOnStock" prefWidth="153.0" text="On stock" />
+                  <TableColumn fx:id="colOnMarket" editable="false" prefWidth="223.0" text="On Market" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+      <Label fx:id="lblMessage" layoutX="29.0" layoutY="693.0" prefHeight="27.0" prefWidth="744.0" />
+   </children>
+</AnchorPane>
