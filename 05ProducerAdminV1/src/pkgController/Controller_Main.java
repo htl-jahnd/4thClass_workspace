@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -16,10 +17,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
 import pkgData.Database;
 import pkgData.Producer;
 import pkgData.Product;
+import pkgMisc.ExceptionHandler;
 import pkgMisc.ProductStates;
 
 public class Controller_Main
@@ -61,6 +64,15 @@ public class Controller_Main
     @FXML
     private TableColumn<Product, LocalDate> colOnMarket;
 
+    @FXML
+    private VBox paneProductInformation;
+
+    @FXML
+    private VBox paneProducers;
+
+    @FXML
+    private Label lblMessage;
+
     private Database db;
     private Producer currentProducer;
     private ObservableList<Producer> listProducers;
@@ -79,7 +91,7 @@ public class Controller_Main
 	listConnectionStrings.add(Database.CONNECTION_STRING_EXTERN);
 	listConnectionStrings.add(Database.CONNECTION_STRING_INTERN);
 	cmbxConnectionString.setItems(listConnectionStrings);
-	
+
 	colId.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id"));
 	colProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
 	colOnMarket.setCellValueFactory(new PropertyValueFactory<Product, LocalDate>("onMarket"));
@@ -94,7 +106,10 @@ public class Controller_Main
 	Product update = (event.getTableView().getItems().get(event.getTablePosition().getRow()));
 
 	update.setName(event.getNewValue());
-	update.setState(ProductStates.UPDATED);
+	if (update.getState().equals(ProductStates.NOT_CHANGED))
+	{
+	    update.setState(ProductStates.UPDATED);
+	}
 	db.updateProduct(update);
     }
 
@@ -104,7 +119,10 @@ public class Controller_Main
 	Product update = (event.getTableView().getItems().get(event.getTablePosition().getRow()));
 
 	update.setOnStock(event.getNewValue());
-	update.setState(ProductStates.UPDATED);
+	if (update.getState().equals(ProductStates.NOT_CHANGED))
+	{
+	    update.setState(ProductStates.UPDATED);
+	}
 	db.updateProduct(update);
     }
 
@@ -124,30 +142,41 @@ public class Controller_Main
 	    {
 		db = Database.newInstance(cmbxConnectionString.getValue());
 		doFillListProducers();
+		paneProducers.setDisable(false);
 	    } else if (source.equals(mntmUpdateAndCommit))
 	    {
-		for(Producer prd : Database.getCollProducers()) {
-		    for(Product pro : prd.getCollProducts()) {
-			if(pro.getState().equals(ProductStates.ADDED)) {
-			    db.insertProductInDatabase(pro);
-			}
-			else if(pro.getState().equals(ProductStates.UPDATED)) {
-			    db.updateProductInDatabase(pro);
+		for (Producer prd : Database.getCollProducers())
+		{
+		    for (Product pro : prd.getCollProducts())
+		    {
+			try
+			{
+			    if (pro.getState().equals(ProductStates.ADDED))
+			    {
+			        db.insertProductInDatabase(pro);
+			    } else if (pro.getState().equals(ProductStates.UPDATED))
+			    {
+			        System.out.println(pro.toString());
+			        db.updateProductInDatabase(pro);
+			    }
+			} catch (SQLException e)
+			{
+			    db.rollback();
+			    doHandleUnexpectedException(e);
 			}
 		    }
 		}
 	    }
 	} catch (Exception e)
 	{
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    doHandleUnexpectedException(e);
 	}
     }
 
     private void doRefreshTableProducts()
     {
 	listProducts.clear();
-	listProducts.addAll(db.getProducts());
+	listProducts.addAll(Database.getProducts());
     }
 
     @FXML
@@ -157,14 +186,14 @@ public class Controller_Main
 	{
 	    if (event.getSource().equals(cmbxProducer))
 	    {
-	        currentProducer = cmbxProducer.getValue();
-	        db.selectProducts(currentProducer);
-	        doRefreshTableProducts();
+		currentProducer = cmbxProducer.getValue();
+		db.selectProducts(currentProducer);
+		doRefreshTableProducts();
+		paneProductInformation.setDisable(false);
 	    }
 	} catch (SQLException e)
 	{
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    doHandleUnexpectedException(e);
 	}
     }
 
@@ -172,7 +201,19 @@ public class Controller_Main
     {
 	db.selectProducers();
 	listProducers.clear();
-	listProducers.setAll(db.getProducers());
+	listProducers.setAll(Database.getProducers());
+    }
+
+    private void doHandleExpectedException(String msg, Exception ex)
+    {
+	lblMessage.setText(msg);
+	ExceptionHandler.hanldeExpectedException(msg, ex);
+    }
+
+    private void doHandleUnexpectedException(Exception ex)
+    {
+	lblMessage.setText(ex.getMessage());
+	ExceptionHandler.hanldeUnexpectedException(ex);
     }
 
 }

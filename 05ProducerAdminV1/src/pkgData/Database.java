@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -73,7 +74,6 @@ public class Database
 	conn = DriverManager.getConnection(connectionString, USER, PWD_DB);
 	conn.setAutoCommit(false);
 	isConnectionSet = true;
-
     }
 
     public void commit() throws Exception
@@ -129,15 +129,14 @@ public class Database
     public void selectProducers() throws SQLException
     {
 	ArrayList<Producer> prods = new ArrayList<Producer>();
-	String select = "SELECT p.id, p.name, p.sales, TO_CHAR(MIN(pc.onMarket),'DD.MM.YYYY') oldest,TO_CHAR(MAX(pc.onMarket),'DD.MM.YYYY') newest,  Count(pc.id) cnt "
+	String select = "SELECT p.id, p.name, p.sales, TO_CHAR(MIN(pc.onMarket),'Dy, DD.MM.YYYY') oldest,TO_CHAR(MAX(pc.onMarket),'Dy, DD.MM.YYYY') newest,  Count(pc.id) cnt "
 		+ " FROM producers p inner join products pc on p.id = pc.id_pc " + " group by p.id, p.name, p.sales ";
 	PreparedStatement stmt = conn.prepareStatement(select);
 	ResultSet rs = stmt.executeQuery();
 	while (rs.next())
 	{
-
-	    LocalDate newestLC = LocalDate.parse(rs.getString("newest"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-	    LocalDate oldestLC = LocalDate.parse(rs.getString("oldest"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+	    LocalDate newestLC = LocalDate.parse(rs.getString("newest"), DateTimeFormatter.ofPattern("E, dd.MM.yyyy"));
+	    LocalDate oldestLC = LocalDate.parse(rs.getString("oldest"), DateTimeFormatter.ofPattern("E, dd.MM.yyyy"));
 	    prods.add(new Producer(rs.getInt("id"), rs.getString("name"), rs.getBigDecimal("sales"), newestLC, oldestLC,
 		    rs.getInt("cnt")));
 	}
@@ -148,15 +147,14 @@ public class Database
     public void selectProducts(Producer p) throws SQLException
     {
 	ArrayList<Product> prods = new ArrayList<Product>();
-	String select = "SELECT id, name, onStock, TO_CHAR(onMarket,'DD.MM.YYYY') onmarket, id_pc FROM products where id_pc=?";
+	String select = "SELECT id, name, onStock, TO_CHAR(pc.onMarket,'Dy. DD.MM.YYYY') onmarket, id_pc FROM products where id_pc=?";
 	PreparedStatement stmt = conn.prepareStatement(select);
 	stmt.setInt(1, p.getId());
 	ResultSet rs = stmt.executeQuery();
 	while (rs.next())
-	{
-	    LocalDate onMarketLC = LocalDate.parse(rs.getString("onmarket"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-	    prods.add(new Product(rs.getInt("id"), rs.getString("name"), rs.getInt("onStock"), onMarketLC, rs.getInt("id_pc"),
-		    ProductStates.NOT_CHANGED));
+	{ LocalDate onMarketLC = LocalDate.parse(rs.getString("onmarket"), DateTimeFormatter.ofPattern("EE. dd.MM.yyyy"));
+	    prods.add(new Product(rs.getInt("id"), rs.getString("name"), rs.getInt("onStock"), onMarketLC,
+		    rs.getInt("id_pc"), ProductStates.NOT_CHANGED));
 	}
 	collProducts.clear();
 	collProducts.addAll(prods);
@@ -167,12 +165,12 @@ public class Database
 
     public void insertProductInDatabase(Product newProduct) throws Exception
     {
-	String insert = "INSERT INTO products VALUES (seqProduct.nextVal,?,?,?,TO_DATE(?,'DD.MM.YYYY'))";
+	String insert = "INSERT INTO products VALUES (seqProduct.nextVal,?,?,?,TO_DATE(?,'dy. DD.MM.YYYY'))";
 	PreparedStatement stmt = conn.prepareStatement(insert);
 	stmt.setString(1, newProduct.getName());
 	stmt.setInt(2, newProduct.getIdProducerId());
 	stmt.setInt(3, newProduct.getOnStock());
-	stmt.setString(4, newProduct.getOnMarket().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+	stmt.setString(4, newProduct.getOnMarket().format(DateTimeFormatter.ofPattern("EE. dd.MM.yyyy")));
 
 	stmt.executeUpdate();
 	commit();
