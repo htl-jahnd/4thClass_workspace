@@ -1,5 +1,6 @@
 package pkgController;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -9,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -20,8 +22,10 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
 import pkgData.Database;
+import pkgData.Order;
 import pkgData.Producer;
 import pkgData.Product;
+import pkgMisc.BigDecimalFormatConverter;
 import pkgMisc.ExceptionHandler;
 import pkgMisc.ProductStates;
 
@@ -33,6 +37,12 @@ public class Controller_Main
 
     @FXML
     private MenuItem mntmUpdateAndCommit;
+
+    @FXML
+    private MenuItem mntmDecreaseStock;
+
+    @FXML
+    private MenuItem mntmCommitOrder;
 
     @FXML
     private MenuItem mntmAddProduct;
@@ -62,7 +72,7 @@ public class Controller_Main
     private TableColumn<Product, Integer> colProductOnStock;
 
     @FXML
-    private TableColumn<Product, LocalDate> colOnMarket;
+    private TableColumn<Product, String> colOnMarket;
 
     @FXML
     private VBox paneProductInformation;
@@ -73,11 +83,21 @@ public class Controller_Main
     @FXML
     private Label lblMessage;
 
+    @FXML
+    private ListView<Order> listViewOrders;
+
+    @FXML
+    private TableColumn<Product, Integer> colProductDecStock;
+
+    @FXML
+    private TableColumn<Product, BigDecimal> colProductPrice;
+
     private Database db;
     private Producer currentProducer;
     private ObservableList<Producer> listProducers;
     private ObservableList<Product> listProducts;
     private ObservableList<String> listConnectionStrings;
+    private ObservableList<Order> listOrders;
 
     @FXML
     void initialize()
@@ -85,7 +105,9 @@ public class Controller_Main
 	listProducers = FXCollections.observableArrayList();
 	listProducts = FXCollections.observableArrayList();
 	listConnectionStrings = FXCollections.observableArrayList();
+	listOrders = FXCollections.observableArrayList();
 
+	listViewOrders.setItems(listOrders);
 	cmbxProducer.setItems(listProducers);
 	tableProducts.setItems(listProducts);
 	listConnectionStrings.add(Database.CONNECTION_STRING_EXTERN);
@@ -94,10 +116,15 @@ public class Controller_Main
 
 	colId.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id"));
 	colProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
-	colOnMarket.setCellValueFactory(new PropertyValueFactory<Product, LocalDate>("onMarket"));
+	colOnMarket.setCellValueFactory(new PropertyValueFactory<Product, String>("onMarketAsString"));
 	colProductOnStock.setCellValueFactory(new PropertyValueFactory<Product, Integer>("onStock"));
+	colProductDecStock.setCellValueFactory(new PropertyValueFactory<Product, Integer>("decreasedStock"));
+	colProductPrice.setCellValueFactory(new PropertyValueFactory<Product, BigDecimal>("price"));
 	colProductName.setCellFactory(TextFieldTableCell.forTableColumn());
 	colProductOnStock.setCellFactory(TextFieldTableCell.forTableColumn((new IntegerStringConverter())));
+	colProductDecStock.setCellFactory(TextFieldTableCell.forTableColumn((new IntegerStringConverter())));
+	colProductPrice.setCellFactory(TextFieldTableCell.forTableColumn(new BigDecimalFormatConverter()));
+
     }
 
     @FXML
@@ -127,6 +154,25 @@ public class Controller_Main
     }
 
     @FXML
+    void onEditProductDecStock(CellEditEvent<Product, Integer> event)
+    {
+	Product update = (event.getTableView().getItems().get(event.getTablePosition().getRow()));
+
+	update.setDecreasedStock(event.getNewValue());
+	if (update.getState().equals(ProductStates.NOT_CHANGED))
+	{
+	    update.setState(ProductStates.UPDATED);
+	}
+	db.updateProduct(update);
+    }
+
+    @FXML
+    void onEditProductPrice(CellEditEvent<Product, BigDecimal> event)
+    {
+	(event.getTableView().getItems().get(event.getTablePosition().getRow())).setPrice(event.getNewValue());
+    }
+
+    @FXML
     void onSelectMenuDatabase(ActionEvent event)
     {
 	try
@@ -135,7 +181,7 @@ public class Controller_Main
 	    if (source.equals(mntmAddProduct))
 	    {
 		Product newP = new Product(db.getNextProductId(), "New Product", 0, LocalDate.now(),
-			currentProducer.getId(), ProductStates.ADDED);
+			currentProducer.getId(), ProductStates.ADDED, 0, BigDecimal.ZERO);
 		db.addProduct(newP, currentProducer);
 		doRefreshTableProducts();
 	    } else if (source.equals(mntmLoadProducers))
@@ -153,11 +199,11 @@ public class Controller_Main
 			{
 			    if (pro.getState().equals(ProductStates.ADDED))
 			    {
-			        db.insertProductInDatabase(pro);
+				db.insertProductInDatabase(pro);
 			    } else if (pro.getState().equals(ProductStates.UPDATED))
 			    {
-			        System.out.println(pro.toString());
-			        db.updateProductInDatabase(pro);
+				System.out.println(pro.toString());
+				db.updateProductInDatabase(pro);
 			    }
 			} catch (SQLException e)
 			{
@@ -167,6 +213,31 @@ public class Controller_Main
 		    }
 		}
 		db.commit();
+	    } else if (event.getSource().equals(mntmCommitOrder))
+	    {
+		try
+		{
+		    db.commitOrders();
+		} catch (SQLException e)
+		{
+		    db.rollback();
+		    throw e;
+		}
+	    } else if (event.getSource().equals(mntmDecreaseStock))
+	    {
+		for (Product p : Database.getCollProducts())
+		{
+		    if (p.getDecreasedStock() > 0)
+		    {
+			Order tmp = new Order(db.getNextOrderId(), p.getDecreasedStock(), p.getPrice(), p);
+			Database.getCollOrdersToCommit().add(tmp);
+			p.setDecreasedStock(0);
+			p.setPrice(BigDecimal.ZERO);
+			doRefreshTableProducts();
+		    }
+		    listOrders.clear();
+		    listOrders.setAll(Database.getOrders());
+		}
 	    }
 	} catch (Exception e)
 	{

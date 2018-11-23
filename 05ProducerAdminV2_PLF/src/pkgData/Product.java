@@ -1,6 +1,8 @@
 package pkgData;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import pkgMisc.ProductStates;
 
@@ -12,16 +14,23 @@ public class Product
     private LocalDate onMarket;
     private int producerId;
     private ProductStates state;
+    private int decreasedStock;
+    private BigDecimal price;
 
-    public Product(int id, String name, int onStock, LocalDate onMarket, int idProducer, ProductStates state)
+   
+
+    public Product(int id, String name, int onStock, LocalDate onMarket, int producerId, ProductStates state,
+	    int decreasedStock, BigDecimal price)
     {
 	super();
 	this.id = id;
 	this.name = name;
 	this.onStock = onStock;
 	this.onMarket = onMarket;
-	this.producerId = idProducer;
+	this.producerId = producerId;
 	this.state = state;
+	this.decreasedStock = decreasedStock;
+	this.price = price;
     }
 
     @Override
@@ -75,6 +84,11 @@ public class Product
     {
 	return onMarket;
     }
+    
+    public String getOnMarketAsString() {
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, MMM d yyyy");
+	return formatter.format(onMarket);
+    }
 
     public void setOnMarket(LocalDate onMarket)
     {
@@ -89,6 +103,26 @@ public class Product
     public void setIdProducer(int idProducer)
     {
 	this.producerId = idProducer;
+    }
+
+    public int getDecreasedStock()
+    {
+        return decreasedStock;
+    }
+
+    public void setDecreasedStock(int decreasedStock)
+    {
+        this.decreasedStock = decreasedStock;
+    }
+
+    public BigDecimal getPrice()
+    {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price)
+    {
+        this.price = price;
     }
 
 }
