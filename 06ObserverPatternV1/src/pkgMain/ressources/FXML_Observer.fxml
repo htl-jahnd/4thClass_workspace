@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="318.0" prefWidth="420.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="pkgController.FXMLObserverController">
+   <children>
+      <ListView fx:id="listViewSongs" layoutX="26.0" layoutY="16.0" prefHeight="200.0" prefWidth="376.0" />
+      <Label fx:id="lblMessage" layoutX="20.0" layoutY="284.0" prefHeight="17.0" prefWidth="381.0" />
+   </children>
+</AnchorPane>
