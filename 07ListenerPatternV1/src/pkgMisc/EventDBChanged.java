@@ -6,7 +6,7 @@ import java.util.EventObject;
 public class EventDBChanged extends EventObject
 {
 
-    private EventDBType type;
+    private final EventDBType type;
     
     public EventDBChanged(Object source)
     {
@@ -25,9 +25,5 @@ public class EventDBChanged extends EventObject
         return type;
     }
 
-    public void setType(EventDBType type)
-    {
-        this.type = type;
-    }
 
 }
