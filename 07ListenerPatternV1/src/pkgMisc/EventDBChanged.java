@@ -11,7 +11,7 @@ public class EventDBChanged extends EventObject
     public EventDBChanged(Object source)
     {
 	super(source);
-	// TODO Auto-generated constructor stub
+	type = EventDBType.UNDEFINED;
     }
 
     public EventDBChanged(Object source, EventDBType type)
