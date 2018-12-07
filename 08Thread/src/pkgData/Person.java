@@ -27,7 +27,7 @@ public class Person extends Thread
 		System.out.println(this.getClass() + ":  " + personName + "   " + to);
 		from++;
 		Random r = new Random();
-		sleep(r.nextInt(4) * 1000);
+		sleep(r.nextInt(4000));
 	    }
 	} catch (Exception e)
 	{

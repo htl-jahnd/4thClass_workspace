@@ -30,7 +30,7 @@ public abstract class Animal extends Thread
 	        System.out.println(this.getClass()+":  "+animalName+ "   "+to);
 	        to++;
 	        Random r = new Random();
-	        sleep(r.nextInt(2)*1000);
+	        sleep(r.nextInt(2000));
 	    }
 	} catch (Exception e)
 	{
