@@ -6,10 +6,6 @@ public class Pizza
     private static int numberOfPizza;
     private String name;
     
-    public static synchronized void decrementNumberOfPizzas() {
-	numberOfPizza--;
-    }
-    
     public String getName()
     {
         return name;

@@ -13,11 +13,9 @@ public class Bar
     
     public synchronized void addPizza(Pizza p) {
 	pizzas.add(p);
-//	System.out.println("add:"+pizzas.size());
     }
     
     public synchronized Queue<Pizza> getPizzas(){
-//	System.out.println("get:"+pizzas.size());
 	return pizzas;
     }
     

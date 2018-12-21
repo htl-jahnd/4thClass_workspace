@@ -12,7 +12,7 @@ public class Pizza_MainAppl
 {
 
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws InterruptedException
     {
 	Semaphore onBar = new Semaphore(0);
 	Semaphore barFree = new Semaphore(3);
@@ -29,7 +29,7 @@ public class Pizza_MainAppl
 	for(ISubject s : collSubjects) {
 	    s.start();
 	}
-	
+	Thread.sleep(3000);
 	for(ISubject s : collSubjects) {
 	    s.setEnd();
 	}

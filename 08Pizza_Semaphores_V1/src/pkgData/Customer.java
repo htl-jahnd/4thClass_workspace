@@ -1,6 +1,5 @@
 package pkgData;
 
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -48,7 +47,6 @@ public class Customer extends Thread implements ISubject
 		    Thread.sleep(dur);
 		    semaBarFree.release();
 		}
-		// Pizza.decrementNumberOfPizzas();
 	    } catch (Exception ex)
 	    {
 		ex.printStackTrace();
