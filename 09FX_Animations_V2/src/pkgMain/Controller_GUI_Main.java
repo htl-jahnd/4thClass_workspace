@@ -86,7 +86,6 @@ public class Controller_GUI_Main {
 	ptr.setPath(path);
 	ptr.setNode(iv);
 	ptr.play();
-	
     }
 
     public static Stage getStage()
