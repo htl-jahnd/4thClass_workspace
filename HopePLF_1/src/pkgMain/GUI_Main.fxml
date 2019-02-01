@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="684.0" prefWidth="1022.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="pkgMain.MainController">
+   <children>
+      <ListView fx:id="listProducts" layoutX="200.0" prefHeight="288.0" prefWidth="400.0" />
+      <ListView fx:id="listOrders" layoutX="200.0" layoutY="288.0" prefHeight="288.0" prefWidth="400.0" />
+      <Label fx:id="lblMessage" layoutX="23.0" layoutY="653.0" prefHeight="17.0" prefWidth="569.0" text="Label" />
+      <Label layoutX="200.0" layoutY="589.0" text="order#" />
+      <Label layoutX="391.0" layoutY="589.0" text="qty" />
+      <TextField fx:id="txtOrderNumber" layoutX="261.0" layoutY="584.0" prefHeight="27.0" prefWidth="118.0" />
+      <TextField fx:id="txtOrderQuantity" layoutX="435.0" layoutY="584.0" prefHeight="27.0" prefWidth="118.0" />
+      <Button fx:id="btnLoad" layoutX="47.0" layoutY="236.0" mnemonicParsing="false" onAction="#onSelectButton" text="Load" />
+      <Button fx:id="btnInsert" layoutX="47.0" layoutY="288.0" mnemonicParsing="false" onAction="#onSelectButton" text="Insert" />
+      <Button fx:id="btnExecute" layoutX="44.0" layoutY="342.0" mnemonicParsing="false" onAction="#onSelectButton" text="Execute" />
+   </children>
+</AnchorPane>
